@@ -1,1 +1,2 @@
 git repozitar pro prj4 - Martin Majer
+
