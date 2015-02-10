@@ -11,10 +11,10 @@ import cv2
 
 # <codecell>
 
-img_fn = '../data/sun.jpg'
+img_fn = '../data/week01/sun.jpg'
 img = cv2.imread(img_fn)
-#img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-img = img[:,:,::-1]
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+#img = img[:,:,::-1]
 
 print img.shape
 
