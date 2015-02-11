@@ -3,7 +3,7 @@
 
 # <markdowncell>
 
-# zprovoznit h5py knihovnu
+# * zprovoznit h5py knihovnu
 
 # <codecell>
 
@@ -22,4 +22,41 @@ import h5py
 #     * {'img1.png': img, ...}  
 # * vypocitat prumerny obrazek a zobrazit ho
 #   * np.mean
+
+# <codecell>
+
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+
+#%matplotlib inline
+
+# <codecell>
+
+def load_imgs(img_dir, shape):
+    imgs = [img for img in os.listdir(img_dir) if not img.startswith('.')]
+    
+    resized = {}
+    
+    for img_name in imgs[:3]:
+        img_path = img_dir + img_name
+        img = cv2.imread(img_path)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        
+        #resize
+        
+        resized[img_name] = img 
+    
+    return resized
+
+# <codecell>
+
+width = 800
+height = 600
+
+img_dir = '../data/week01ukoly/'
+shape = width, height
+
+resized = load_imgs(img_dir,shape)
 
