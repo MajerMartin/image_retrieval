@@ -30,7 +30,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
-#%matplotlib inline
+%matplotlib inline
 
 # <codecell>
 
@@ -39,14 +39,14 @@ def load_imgs(img_dir, shape):
     
     resized = {}
     
-    for img_name in imgs[:3]:
+    for img_name in imgs:
         img_path = img_dir + img_name
         img = cv2.imread(img_path)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         
-        #resize
+        img_resized = cv2.resize(img, shape, interpolation = cv2.INTER_CUBIC)
         
-        resized[img_name] = img 
+        resized[img_name] = img_resized
     
     return resized
 
