@@ -60,3 +60,17 @@ shape = width, height
 
 resized = load_imgs(img_dir,shape)
 
+# <codecell>
+
+img_average = np.zeros((height, width, 3), np.float)
+
+for value in resized.values():
+    img_average += value
+
+img_average /= len(resized)
+img_average = img_average.astype(np.uint8)
+
+plt.figure()
+plt.imshow(img_average)
+plt.show()
+
