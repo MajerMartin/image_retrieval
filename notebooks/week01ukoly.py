@@ -62,7 +62,7 @@ resized = load_imgs(img_dir,shape)
 
 # <codecell>
 
-img_average = np.zeros((height, width, 3), np.float)
+img_average = np.zeros((height, width, 3), np.float32)
 
 for value in resized.values():
     img_average += value
@@ -73,4 +73,26 @@ img_average = img_average.astype(np.uint8)
 plt.figure()
 plt.imshow(img_average)
 plt.show()
+
+# <codecell>
+
+print resized.values()[0].shape
+
+imgs = np.array(resized.values())
+
+print imgs.shape
+
+img_mean = np.mean(imgs, axis=0) / 255
+print img_mean.shape, img_mean.dtype
+
+plt.figure()
+plt.imshow(img_mean)
+plt.colorbar()
+plt.show()
+
+# <codecell>
+
+x = np.ones(1).astype(np.uint8) * 255
+print x
+print x + 1
 
