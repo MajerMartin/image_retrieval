@@ -52,22 +52,33 @@ def list_filepaths(root):
 
 # <codecell>
 
-def keep_ratio(shape):
-    height = 227.
-    width = 227.
+def keep_ratio(shape, height, width):
     
     if shape[0] <= shape[1]: #height <= width
         ratio = height / shape[0]
-        print ratio
         width = shape[1] * ratio
     else:
         ratio = width / shape[1]
-        print ratio
         height = shape[0] * ratio
     
     dim = int(width), int(height) #opencv dimension format
     
     return dim
+
+# <codecell>
+
+def crop(img ,height, width):
+    if (img.shape[0] == height) and (img.shape[1] == width):
+        print 'square'
+        return img
+    elif img.shape[0] == height:
+        print 'horizontal'
+        middle = img.shape[1] / 2
+        return img[:,(middle - width / 2):(middle + width / 2)]
+    else:
+        print 'vertical'
+        middle = img.shape[0] / 2
+        return img[(middle - height / 2):(middle + height / 2),:]
 
 # <codecell>
 
@@ -79,6 +90,9 @@ sample = sorted(imgs_path)  #copy
 np.random.seed(50)
 np.random.shuffle(sample) #in-place
 sample = sample[:10000]
+
+height = 227.
+width = 227.
 
 # <codecell>
 
@@ -97,11 +111,16 @@ img3 = cv2.cvtColor(img3, cv2.COLOR_BGR2GRAY)
 img4 = cv2.imread('../data/4.png')
 img4 = cv2.cvtColor(img4, cv2.COLOR_BGR2RGB)
 
-dim = keep_ratio(img1.shape)
-img_resized = cv2.resize(img1, dim, interpolation = cv2.INTER_CUBIC)
+abc = img4
+
+dim = keep_ratio(abc.shape, height, width)
+img_resized = cv2.resize(abc, dim, interpolation = cv2.INTER_CUBIC)
+img_cropped = crop(img_resized, height, width)
+print img_resized.shape
+print img_cropped.shape
 
 plt.figure()
-plt.imshow(img_resized)
+plt.imshow(img_cropped)
 plt.show()
 
 
