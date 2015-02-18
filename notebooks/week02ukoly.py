@@ -56,10 +56,8 @@ root = '../data/SUN2012/Images/'
 
 imgs_path = list_filepaths(root)
 
-sample = sorted(imgs_path)
-
-
-
-tmp = sample[:30]
-print tmp
+sample = sorted(imgs_path)  #copy
+np.random.seed(50)
+np.random.shuffle(sample) #in-place
+sample = sample[:10000]
 
