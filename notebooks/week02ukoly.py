@@ -103,8 +103,8 @@ with h5py.File(filename,'w') as f:
     dset = f.create_dataset('imgs', (n, height, width, 3), dtype=np.float32)
     filenames = []
     
-    for i, path in enumerate(sample[:1]):
-        print i, path
+    for i, path in enumerate(sample[:3]):
+        print i, path #smazat
         img = cv2.imread(path)
         if len(img.shape) == 3:
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -112,18 +112,10 @@ with h5py.File(filename,'w') as f:
             img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_CUBIC)
             img_cropped = crop(img_resized, height, width)
             
-            plt.figure()
-            plt.imshow(img_cropped)
-            plt.show()
-            
-            dset[i] = img_cropped
+            dset[i] = img_cropped / 255.
             filenames.append(os.path.basename(path))
 
-    print filenames
-    
-    print dset[0].shape
-       
-    plt.figure()
-    plt.imshow(dset[0])
-    plt.show()
+    print filenames #smazat
+    #dset['filenames'] = filenames
+    #print dset['filenames']
 
