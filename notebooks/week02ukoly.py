@@ -34,6 +34,32 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+import h5py
 
 %matplotlib inline
+
+# <codecell>
+
+def list_filepaths(root):
+    imgs_path = []
+
+    for path, subdirs, files in os.walk(root):
+        for name in files:
+            if not name.startswith('.'):
+                imgs_path.append(os.path.join(path, name))
+                
+    return imgs_path
+
+# <codecell>
+
+root = '../data/SUN2012/Images/'
+
+imgs_path = list_filepaths(root)
+
+sample = sorted(imgs_path)
+
+
+
+tmp = sample[:30]
+print tmp
 
