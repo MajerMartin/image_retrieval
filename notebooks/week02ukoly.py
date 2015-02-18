@@ -67,16 +67,14 @@ def keep_ratio(shape, height, width):
 
 # <codecell>
 
-def crop(img ,height, width):
+def crop(img, height, width):
+    
     if (img.shape[0] == height) and (img.shape[1] == width):
-        print 'square'
         return img
     elif img.shape[0] == height:
-        print 'horizontal'
         middle = img.shape[1] / 2
         return img[:,(middle - width / 2):(middle + width / 2)]
     else:
-        print 'vertical'
         middle = img.shape[0] / 2
         return img[(middle - height / 2):(middle + height / 2),:]
 
@@ -89,7 +87,9 @@ imgs_path = list_filepaths(root)
 sample = sorted(imgs_path)  #copy
 np.random.seed(50)
 np.random.shuffle(sample) #in-place
-sample = sample[:10000]
+
+n = 10000
+sample = sample[:n]
 
 height = 227.
 width = 227.
@@ -99,43 +99,31 @@ width = 227.
 filename = 'sun_sample.hdf5'
 
 with h5py.File(filename,'w') as f:
-
-# <codecell>
-
-img1 = cv2.imread('../data/1.jpg')
-img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
-img2 = cv2.imread('../data/2.jpg')
-img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
-img3 = cv2.imread('../data/2.jpg')
-img3 = cv2.cvtColor(img3, cv2.COLOR_BGR2GRAY)
-img4 = cv2.imread('../data/4.png')
-img4 = cv2.cvtColor(img4, cv2.COLOR_BGR2RGB)
-
-abc = img4
-
-dim = keep_ratio(abc.shape, height, width)
-img_resized = cv2.resize(abc, dim, interpolation = cv2.INTER_CUBIC)
-img_cropped = crop(img_resized, height, width)
-print img_resized.shape
-print img_cropped.shape
-
-plt.figure()
-plt.imshow(img_cropped)
-plt.show()
-
-
-
-
-
-
-ok = [img1, img2, img3]
-
-for img in ok:
-    if len(img.shape) == 3:
-        print 'ok'
-
-
-
-#for img_path in sample[:2]:
     
+    dset = f.create_dataset('imgs', (n, height, width, 3), dtype=np.float32)
+    filenames = []
+    
+    for i, path in enumerate(sample[:1]):
+        print i, path
+        img = cv2.imread(path)
+        if len(img.shape) == 3:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            dim = keep_ratio(img.shape, height, width)
+            img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_CUBIC)
+            img_cropped = crop(img_resized, height, width)
+            
+            plt.figure()
+            plt.imshow(img_cropped)
+            plt.show()
+            
+            dset[i] = img_cropped
+            filenames.append(os.path.basename(path))
+
+    print filenames
+    
+    print dset[0].shape
+       
+    plt.figure()
+    plt.imshow(dset[0])
+    plt.show()
 
