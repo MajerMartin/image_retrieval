@@ -88,7 +88,7 @@ sample = sorted(imgs_path)  #copy
 np.random.seed(50)
 np.random.shuffle(sample) #in-place
 
-n = 10000
+n = 11000
 sample = sample[:n]
 
 height = 227.
@@ -103,19 +103,27 @@ with h5py.File(filename,'w') as f:
     dset = f.create_dataset('imgs', (n, height, width, 3), dtype=np.float32)
     filenames = []
     
-    for i, path in enumerate(sample[:3]):
-        print i, path #smazat
+    i = 0
+    
+    for path in sample:
+        print '\r', i, path,
         img = cv2.imread(path)
-        if len(img.shape) == 3:
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            dim = keep_ratio(img.shape, height, width)
-            img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_CUBIC)
-            img_cropped = crop(img_resized, height, width)
+        try:
+            if len(img.shape) == 3:
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                dim = keep_ratio(img.shape, height, width)
+                img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_CUBIC)
+                img_cropped = crop(img_resized, height, width)
             
-            dset[i] = img_cropped / 255.
-            filenames.append(os.path.basename(path))
-
-    print filenames #smazat
-    dset['filenames'] = filenames
-    #print dset['filenames']
+                dset[i] = img_cropped / 255.
+                filenames.append(os.path.basename(path))
+                
+                i += 1
+        except:
+            print '- error'
+        
+        if i >= 10000:
+            break
+            
+    f['filenames'] = filenames
 
