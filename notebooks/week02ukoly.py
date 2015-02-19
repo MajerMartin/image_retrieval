@@ -116,6 +116,6 @@ with h5py.File(filename,'w') as f:
             filenames.append(os.path.basename(path))
 
     print filenames #smazat
-    #dset['filenames'] = filenames
+    dset['filenames'] = filenames
     #print dset['filenames']
 
