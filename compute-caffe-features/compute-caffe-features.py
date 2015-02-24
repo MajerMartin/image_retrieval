@@ -120,7 +120,7 @@ with h5py.File(h5_src_fn,'r') as fr, h5py.File(h5_dst_fn, 'w') as fw:
         img = np.array(fr['imgs'][i][:,:,::-1]) # are channels swapped in source h5 file?
         img = img.astype(np.float32) * 255 # this caffe model expects pixel values from 0 to 255
 
-        assert img.shape == (227, 227, 3)
+        assert img.shape == (227, 227, 3), 'sldjfklksdjf'
         
         # predict
         score = net.predict([img]).flatten()  # predict() takes any number of images, and formats them for the Caffe net automatically
@@ -149,34 +149,55 @@ print 'done.'
 
 # <codecell>
 
+# ukoly:
+# 1) vypocitat distance matrix pro vsechny obrazky, lze pouzit np.linalg.norm (viz nize). Jako priznaky pouzit "score" a "blob_fc7", u ktereho se z 10ti vektoru vybere ten na indexu 4
+# 2) pouzit pro to same http://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html, http://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.squareform.html#scipy.spatial.distance.squareform
+# 3) vytvorit funkci find_nearest_images(img_idx, k), k = pocet nejblizsich obrazku, ktere se maji najit
+# 4) pro rychlejsi vyhledavani zkusit http://scikit-learn.org/stable/modules/neighbors.html#unsupervised-nearest-neighbors
+
 if debug:
-    import matplotlib.pyplot as plt
-
-    fn = os.path.join(tmp_convert_dir, '1405329529_jakes.gif.convert.png')
-
-    # check that opencv reads BGR so that channel swap is not needed in caffe
-    img_caffe = caffe.io.load_image(fn)
-    plt.figure()
-    plt.imshow(img_caffe)
-    plt.show()
-
-    img_opencv = cv2.imread(fn)
-    plt.figure()
-    plt.imshow(img_opencv)
-    plt.show()
-
-    # check content of h5
-    with h5py.File(h5_fn, 'r') as fr:
-        print fr.keys()
-
-        plt.figure(figsize=(16,16))
-        plt.imshow(fr['blob_prob'][:100].reshape(-1,1000))
+    with h5py.File(h5_src_fn,'r') as fr_imgs, h5py.File(h5_dst_fn,'r') as fr_features:
+        print fr_features.keys()
+        for k,v in fr_features.iteritems():
+            print k, v.shape
+            
+        i = 105
+            
+        img_1 = np.array(fr_imgs['imgs'][i][:,:,::-1]) # are channels swapped in source h5 file?
+        img_1 = img_1.astype(np.float32) * 255 # this caffe model expects pixel values from 0 to 255
+        
+        plt.figure()
+        plt.imshow(img_1.astype(np.uint8)[:,:,::-1])
         plt.show()
+        
+        best_d = None
+        best_j = None
+        ds = []
+        features_i = np.copy(fr_features['score'][i])
+        
+        for j in range(0, n):
+            features_j = fr_features['score'][j]
+            d = np.linalg.norm(features_i - features_j)
+            
+            ds.append(d)
+            
+            if best_d is None or best_d > d:
+                best_d = d
+                best_j = j
+                
+        ds = np.array(ds)        
+            
+        best_idxs = np.argsort(ds)
+        
+        # show 10 best (=similar) images
+        for k in range(0, 10):
+            j = best_idxs[k]
+            print ds[j]
+            
+            img_2 = np.array(fr_imgs['imgs'][j][:,:,::-1]) # are channels swapped in source h5 file?
+            img_2 = img_2.astype(np.float32) * 255 # this caffe model expects pixel values from 0 to 255
 
-        # check, that final score is mean from blob_prob
-        blob_prob = np.mean(fr['blob_prob'][0], axis=0)
-        score = fr['score'][0]
-
-        if np.max(blob_prob - score) > 0:
-            raise Exception('score and blob_prob values mismatch')
+            plt.figure()
+            plt.imshow(img_2.astype(np.uint8)[:,:,::-1])
+            plt.show()            
 
