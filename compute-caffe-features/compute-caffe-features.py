@@ -42,7 +42,7 @@ print os.getcwd()
 # <codecell>
 
 # options
-h5_src_fn = '/storage/plzen3-kky/korpusy/cv/campr-image-search/sun_sample_majer_20150222.hdf5'
+h5_src_fn = '/storage/plzen3-kky/korpusy/cv/campr-image-search/data/sun_sample_majer_20150222.hdf5'
 h5_dst_fn = h5_src_fn + '.features.hdf5'
 n = 10000
 
