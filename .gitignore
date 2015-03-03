@@ -1,1 +1,4 @@
 data
+*.ipynb
+.ipynb_checkpoints
+*.hdf5

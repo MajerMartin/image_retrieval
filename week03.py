@@ -51,7 +51,7 @@ def print_imgs(indexes, k):
 
 # <codecell>
 
-h5_imgs_fn = '../data/sun_sample.hdf5'
+h5_imgs_fn = '/Users/martin.majer/PycharmProjects/PR4/data/sun_sample.hdf5'
 h5_fts_fn = h5_imgs_fn + '.features.hdf5'
 n = 10000
 
@@ -60,6 +60,10 @@ n = 10000
 with h5py.File(h5_fts_fn,'r') as fr_features:
     features_score = np.copy(fr_features['score'])
     print 'features_score: ', features_score.shape
+
+# <codecell>
+
+with h5py.File(h5_fts_fn,'r') as fr_features:
     features_fc7 = np.copy(fr_features['blob_fc7'][:,4,:])
     print 'features_fc7: ', features_fc7.shape
 
@@ -88,6 +92,8 @@ print 'fc7_scipy: ', dst_m_fc7_sp.shape
 dst_m_score_squareform = squareform(dst_m_score_sp)
 print 'score_scipy_squareform: ', dst_m_score_squareform.shape
 
+# <codecell>
+
 dst_m_fc7_squareform = squareform(dst_m_fc7_sp)
 print 'fc7_scipy_squareform: ', dst_m_fc7_squareform.shape
 
@@ -115,18 +121,28 @@ find_k_nearest(dst_m_fc7_squareform, img_index, k_neighbors)
 # <codecell>
 
 kdt = KDTree(features_score, metric='euclidean')
-k_neighbors_score = kdt.query(features_score, k=k_neighbors, return_distance=False)
 
 # <codecell>
 
-print_imgs(k_neighbors_score[img_index,:], k_neighbors)
+k_neighbors_score = kdt.query(features_score[img_index], k=k_neighbors, return_distance=False)
+
+# <codecell>
+
+print k_neighbors_score.shape
+
+# <codecell>
+
+print_imgs(k_neighbors_score[0], k_neighbors)
 
 # <codecell>
 
 kdt = KDTree(features_fc7, metric='euclidean')
-k_neighbors_fc7 = kdt.query(features_fc7, k=k_neighbors, return_distance=False)
 
 # <codecell>
 
-print_imgs(k_neighbors_fc7[img_index,:], k_neighbors)
+k_neighbors_fc7 = kdt.query(features_fc7[img_index], k=k_neighbors, return_distance=False)
+
+# <codecell>
+
+print_imgs(k_neighbors_fc7[0], k_neighbors)
 
