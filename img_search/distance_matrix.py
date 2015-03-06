@@ -26,13 +26,20 @@ class ImageSearchDistanceMatrix(object):
 
         # add resized images
         if len(images.shape) == 3:
-            img_resized = cv2.resize(images, dim, interpolation = cv2.INTER_NEAREST)  # INTER_CUBIC changes pixel values
-            self.images.append(img_resized)
-
-        else:
-            for img in images:
-                img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
+            if (len(self.images) + 1) > self.max_images:
+                print 'You can add only %d images. Maximum limit achieved.' % (self.max_images - len(self.images))
+                return
+            else:
+                img_resized = cv2.resize(images, dim, interpolation = cv2.INTER_NEAREST)  # INTER_CUBIC changes pixel values
                 self.images.append(img_resized)
+        else:
+            if (len(self.images) + len(images)) > self.max_images:
+                print 'You can add only %d images. Maximum limit achieved.' % (self.max_images - len(self.images))
+                return
+            else:
+                for img in images:
+                    img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
+                    self.images.append(img_resized)
 
         end = len(self.features)
 
