@@ -1,6 +1,8 @@
 __author__ = 'martin.majer'
 
 import numpy as np
+import cv2
+
 
 class ImageSearchDistanceMatrix(object):
     def __init__(self, max_images=100000, thumbnail_size=(150,150,3)):
@@ -18,6 +20,18 @@ class ImageSearchDistanceMatrix(object):
         else:
             self.features.extend(features)
             start = len(self.features) - len(features)
+
+        dim = (self.thumbnail_size[0], self.thumbnail_size[1])
+
+        # add resized images
+        if len(images.shape) == 3:
+            img_resized = cv2.resize(images, dim, interpolation = cv2.INTER_NEAREST)  # INTER_CUBIC changes pixel values
+            self.images.append(img_resized)
+
+        else:
+            for img in images:
+                img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
+                self.images.append(img_resized)
 
         end = len(self.features)
 
@@ -39,32 +53,9 @@ class ImageSearchDistanceMatrix(object):
                 new_col = np.zeros((i + 1, 1))
 
                 for j in range(0, i):
-                    print "i:", i, ", j:", j
                     new_col[j,0] = np.linalg.norm(self.features[i] - self.features[j])
 
                 self.distance_matrix = np.concatenate((self.distance_matrix, new_col), axis=1)
-
-
-
-
-
-
-        self.images.extend(images)
-
-
-        print "imgs: ", self.images
-        print "fts: ", len(self.features), '\n'
-
-
-
-        # zmensi obrazky
-        # prida nove obrazky do images
-        return self.distance_matrix
-        # features - do teto metody vstupuji jiz zvolene typy priznaku
-        # images - zmensit dle self.thumbnail_size, fixni velikost
-
-
-
 
     def find_k_nearest_by_index(self, img_index, k=3):
         pass

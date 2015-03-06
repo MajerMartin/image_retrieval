@@ -3,6 +3,36 @@
 
 # <codecell>
 
+import numpy as np
+import matplotlib.pyplot as plt
+import h5py
+import cv2
+
+import img_search
+
+%matplotlib inline
+
+# <codecell>
+
+h5_imgs_fn = '/Users/martin.majer/PycharmProjects/PR4/data/sun_sample.hdf5'
+h5_fts_fn = h5_imgs_fn + '.features.hdf5'
+n = 10000
+
+dm = img_search.distance_matrix.ImageSearchDistanceMatrix()
+
+# <codecell>
+
+with h5py.File(h5_fts_fn,'r') as fr_features:
+    features_score = np.copy(fr_features['score'])
+    print 'features_score: ', features_score.shape
+
+# <codecell>
+
+a = np.array([[1, 2, 3, 4]])
+print a.T
+
+# <codecell>
+
 import img_search
 
 x = img_search.distance_matrix.ImageSearchDistanceMatrix()
