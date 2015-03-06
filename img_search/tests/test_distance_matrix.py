@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 import h5py
+import matplotlib.pyplot as plt
 
 import img_search.distance_matrix
 
@@ -16,7 +17,6 @@ with h5py.File(h5_fts_fn,'r') as fr_features, h5py.File(h5_imgs_fn,'r') as fr_im
 class DistanceMatrixTestClass(unittest.TestCase):
 
     def test_distance_matrix_init(self):
-
         dm = img_search.distance_matrix.ImageSearchDistanceMatrix()
 
         self.assertEqual(dm.max_images, 100000)
@@ -43,6 +43,15 @@ class DistanceMatrixTestClass(unittest.TestCase):
         self.assertEqual(dm.distance_matrix.shape, (6,6))
         self.assertEqual(len(dm.features), 6)
         self.assertEqual(len(dm.images), 6)
+
+    def test_distance_matrix_get_images(self):
+
+        dm = img_search.distance_matrix.ImageSearchDistanceMatrix()
+
+        dm.add_images(imgs[:6,:,::-1], features[:6,:])
+
+        images = dm.get_images([1,3,5])
+        self.assertEqual(images[0].shape, (150, 150, 3))
 
 if __name__ == '__main__':
     unittest.main()

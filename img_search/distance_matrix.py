@@ -61,14 +61,11 @@ class ImageSearchDistanceMatrix(object):
         pass
 
     def get_images(self, indexes):
-        """
-
-        :param indexes:
-        :return:
-        """
         images = []
+
         for index in indexes:
             images.append(self.images[index])
+
         return images
 
     def save(self, filename):
