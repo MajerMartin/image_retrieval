@@ -58,7 +58,11 @@ class ImageSearchDistanceMatrix(object):
                 self.distance_matrix = np.concatenate((self.distance_matrix, new_col), axis=1)
 
     def find_k_nearest_by_index(self, img_index, k=3):
-        pass
+        self.distance_matrix += self.distance_matrix.T
+        row = self.distance_matrix[img_index,:]
+        closest = np.argsort(row)
+
+        return closest[:k]
 
     def get_images(self, indexes):
         images = []

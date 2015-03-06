@@ -53,5 +53,14 @@ class DistanceMatrixTestClass(unittest.TestCase):
         images = dm.get_images([1,3,5])
         self.assertEqual(images[0].shape, (150, 150, 3))
 
+    def test_distance_matrix_find_k_nearest_by_index(self):
+
+        dm = img_search.distance_matrix.ImageSearchDistanceMatrix()
+
+        dm.add_images(imgs[:6,:,::-1], features[:6,:])
+
+        indexes = dm.find_k_nearest_by_index(1)
+        self.assertEqual(len(indexes), 3)
+
 if __name__ == '__main__':
     unittest.main()
