@@ -2,6 +2,7 @@ __author__ = 'martin.majer'
 
 import numpy as np
 import cv2
+import h5py
 
 
 class ImageSearchDistanceMatrix(object):
@@ -73,8 +74,12 @@ class ImageSearchDistanceMatrix(object):
         return images
 
     def save(self, filename):
-        # ulozit do H5, klice images, features, max_images, thumbnail_size, distance_matrix (ulozit jen spodni trojuhelnik)
-        pass
+        with h5py.File(filename,'w') as f:
+            f['images'] = self.images
+            f['features'] = self.features
+            f['max_images'] = self.max_images
+            f['thumbnail_size'] = self.thumbnail_size
+            f['distance_matrix'] = self.distance_matrix
 
     def load(self, filename):
         pass
