@@ -14,6 +14,25 @@ class ImageSearchDistanceMatrix(object):
         self.features = []
 
     def add_images(self, images, features):
+        dim = (self.thumbnail_size[0], self.thumbnail_size[1])
+
+        # add resized images
+        if len(images.shape) == 3:
+            if (len(self.images) + 1) > self.max_images:
+                print 'You can add only %d more image(s). Maximum limit achieved.' % (self.max_images - len(self.images))
+                return
+            else:
+                img_resized = cv2.resize(images, dim, interpolation = cv2.INTER_NEAREST)  # INTER_CUBIC changes pixel values
+                self.images.append(img_resized)
+        else:
+            if (len(self.images) + len(images)) > self.max_images:
+                print 'You can add only %d more image(s). Maximum limit achieved.' % (self.max_images - len(self.images))
+                return
+            else:
+                for img in images:
+                    img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
+                    self.images.append(img_resized)
+
         # add features
         if len(features.shape) == 1:
             self.features.append(features)
@@ -21,25 +40,6 @@ class ImageSearchDistanceMatrix(object):
         else:
             self.features.extend(features)
             start = len(self.features) - len(features)
-
-        dim = (self.thumbnail_size[0], self.thumbnail_size[1])
-
-        # add resized images
-        if len(images.shape) == 3:
-            if (len(self.images) + 1) > self.max_images:
-                print 'You can add only %d images. Maximum limit achieved.' % (self.max_images - len(self.images))
-                return
-            else:
-                img_resized = cv2.resize(images, dim, interpolation = cv2.INTER_NEAREST)  # INTER_CUBIC changes pixel values
-                self.images.append(img_resized)
-        else:
-            if (len(self.images) + len(images)) > self.max_images:
-                print 'You can add only %d images. Maximum limit achieved.' % (self.max_images - len(self.images))
-                return
-            else:
-                for img in images:
-                    img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
-                    self.images.append(img_resized)
 
         end = len(self.features)
 
