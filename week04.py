@@ -16,28 +16,67 @@ import img_search
 
 h5_imgs_fn = '/Users/martin.majer/PycharmProjects/PR4/data/sun_sample.hdf5'
 h5_fts_fn = h5_imgs_fn + '.features.hdf5'
+n = 2000
 
-dm = img_search.distance_matrix.ImageSearchDistanceMatrix(max_images=500, thumbnail_size=(150,150,3))
+dm = img_search.distance_matrix.ImageSearchDistanceMatrix(max_images=n, thumbnail_size=(150,150,3))
 
 # <codecell>
 
 with h5py.File(h5_fts_fn,'r') as fr_features:
-    features = np.copy(fr_features['score'][:500])
+    features = np.copy(fr_features['score'][:n])
     print 'features:', features.shape
 
 # <codecell>
 
 with h5py.File(h5_imgs_fn,'r') as fr_imgs:
-    imgs = np.array(fr_imgs['imgs'][:500][:,:,::-1])
+    imgs = np.array(fr_imgs['imgs'][:n][:,:,::-1])
     imgs = imgs.astype(np.float32) * 255
+    imgs = imgs.astype(np.uint8)
     print 'imgs:', imgs.shape
 
 # <codecell>
 
-dm.add_images(imgs[:400],features[:400])
+dm.add_images(imgs[:n],features[:n])
 print dm.distance_matrix.shape
 print len(dm.images)
 print len(dm.features)
+
+# <codecell>
+
+dm.add_images(imgs[:2],features[:2])
+
+# <codecell>
+
+neighbors = dm.find_k_nearest_by_index(2)
+print neighbors
+
+# <codecell>
+
+images = dm.get_images(neighbors)
+
+for img in images:
+    plt.figure()
+    plt.imshow(img[:,:,::-1])
+    plt.colorbar()
+    plt.show()
+
+# <codecell>
+
+filename = 'test'
+dm.save(filename)
+
+# <codecell>
+
+dm_copy = img_search.distance_matrix.ImageSearchDistanceMatrix(max_images=10, thumbnail_size=(10,10,3))
+dm_copy.load(filename)
+
+# <codecell>
+
+print dm_copy.distance_matrix.shape
+print len(dm_copy.images)
+print len(dm_copy.features)
+print dm_copy.max_images
+print dm_copy.thumbnail_size
 
 # <codecell>
 

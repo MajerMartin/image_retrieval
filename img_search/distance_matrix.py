@@ -90,8 +90,10 @@ class ImageSearchDistanceMatrix(object):
 
     def load(self, filename):
         with h5py.File(filename,'r') as fr:
-            self.images = fr['images']
-            self.features = fr['features']
-            self.max_images = fr['max_images']
-            self.thumbnail_size = fr['thumbnail_size']
-            self.distance_matrix = fr['distance_matrix']
+            for img in fr['images']:
+                self.images.append(img)
+
+            #self.features = fr['features']
+            #self.max_images = fr['max_images']
+            #self.thumbnail_size = fr['thumbnail_size']
+            #self.distance_matrix = fr['distance_matrix']
