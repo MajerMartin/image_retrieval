@@ -76,10 +76,11 @@ class DistanceMatrixTestClass(unittest.TestCase):
 
         self.assertEqual(len(dm_copy.images), 6)
         self.assertEqual(dm_copy.images[0].shape, (150,150,3))
-        #self.assertEqual(len(dm_copy.features), 6)
-        #self.assertEqual(dm_copy.distance_matrix.shape, (6,6))
-        #self.assertEqual(dm_copy.thumbnail_size, (150,150,3))
-        #self.assertEqual(dm_copy.max_images, 100000)
+        self.assertEqual(len(dm_copy.features), 6)
+        self.assertEqual(dm_copy.features[0].shape, (1000,))
+        self.assertEqual(dm_copy.distance_matrix.shape, (6,6))
+        self.assertEqual(dm_copy.thumbnail_size, (150,150,3))
+        self.assertEqual(dm_copy.max_images, 100000)
 
 
 if __name__ == '__main__':

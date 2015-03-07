@@ -65,8 +65,9 @@ class ImageSearchDistanceMatrix(object):
 
                 self.distance_matrix = np.concatenate((self.distance_matrix, new_col), axis=1)
 
-    def find_k_nearest_by_index(self, img_index, k=3):
         self.distance_matrix += self.distance_matrix.T
+
+    def find_k_nearest_by_index(self, img_index, k=3):
         row = self.distance_matrix[img_index,:]
         closest = np.argsort(row)
 
@@ -86,14 +87,27 @@ class ImageSearchDistanceMatrix(object):
             fw['features'] = self.features
             fw['max_images'] = self.max_images
             fw['thumbnail_size'] = self.thumbnail_size
-            fw['distance_matrix'] = self.distance_matrix
+            fw['distance_matrix'] = np.triu(self.distance_matrix)
 
     def load(self, filename):
         with h5py.File(filename,'r') as fr:
+            # load as list instead of numpy array
+            self.images = []
             for img in fr['images']:
-                self.images.append(img)
+                 self.images.append(img)
 
-            #self.features = fr['features']
-            #self.max_images = fr['max_images']
-            #self.thumbnail_size = fr['thumbnail_size']
-            #self.distance_matrix = fr['distance_matrix']
+            self.features = []
+            for feat in fr['features']:
+                self.features.append(feat)
+
+            # load whole matrix
+            self.distance_matrix = None
+            self.distance_matrix = fr['distance_matrix'][:]
+
+            # load as list
+            thumbnail_size = fr['thumbnail_size']
+            self.thumbnail_size = (thumbnail_size[0], thumbnail_size[1], thumbnail_size[2])
+
+            #reading scalar dataset
+            data = fr['max_images']
+            self.max_images = data[()]
