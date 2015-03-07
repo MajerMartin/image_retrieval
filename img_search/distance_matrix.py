@@ -108,6 +108,6 @@ class ImageSearchDistanceMatrix(object):
             thumbnail_size = fr['thumbnail_size']
             self.thumbnail_size = (thumbnail_size[0], thumbnail_size[1], thumbnail_size[2])
 
-            #reading scalar dataset
+            # reading scalar dataset
             data = fr['max_images']
             self.max_images = data[()]

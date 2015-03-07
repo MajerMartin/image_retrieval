@@ -3,7 +3,6 @@ __author__ = 'martin.majer'
 import unittest
 import numpy as np
 import h5py
-import matplotlib.pyplot as plt
 
 import img_search.kdtree
 
@@ -64,6 +63,26 @@ class KDTreeTestClass(unittest.TestCase):
 
         images = kdt.get_images([1])
         self.assertEqual(images[0].shape, (150, 150, 3))
+
+    def test_kdtree_load(self):
+        kdt = img_search.kdtree.ImageSearchKDTree()
+
+        kdt.add_images(imgs[:6,:,::-1], features[:6,:])
+
+        filename = 'test_kdt'
+        kdt.save(filename)
+
+        kdt_copy = img_search.kdtree.ImageSearchKDTree(max_images=10, thumbnail_size=(10,10,3))
+
+        kdt_copy.load(filename)
+
+        self.assertEqual(len(kdt_copy.images), 6)
+        self.assertEqual(kdt_copy.images[0].shape, (150,150,3))
+        self.assertEqual(len(kdt_copy.features), 6)
+        self.assertEqual(kdt_copy.features[0].shape, (1000,))
+        self.assertNotEqual(kdt_copy.tree, None)
+        self.assertEqual(kdt_copy.thumbnail_size, (150,150,3))
+        self.assertEqual(kdt_copy.max_images, 100000)
 
 if __name__ == '__main__':
     unittest.main()

@@ -2,6 +2,7 @@ __author__ = 'martin.majer'
 
 import numpy as np
 import cv2
+import h5py
 import itertools
 from sklearn.neighbors import KDTree
 
@@ -56,7 +57,31 @@ class ImageSearchKDTree(object):
         return images
 
     def save(self, filename):
-        pass
+        with h5py.File(filename,'w') as fw:
+            fw['images'] = self.images
+            fw['features'] = self.features
+            fw['max_images'] = self.max_images
+            fw['thumbnail_size'] = self.thumbnail_size
 
-    def save(self, filename):
-        pass
+    def load(self, filename):
+        with h5py.File(filename,'r') as fr:
+            # load as list instead of numpy array
+            self.images = []
+            for img in fr['images']:
+                self.images.append(img)
+
+            self.features = []
+            for feat in fr['features']:
+                self.features.append(feat)
+
+            # rebuild KDTree
+            self.tree = None
+            self.tree = KDTree(self.features, metric='euclidean')
+
+            # load as list
+            thumbnail_size = fr['thumbnail_size']
+            self.thumbnail_size = (thumbnail_size[0], thumbnail_size[1], thumbnail_size[2])
+
+            # reading scalar dataset
+            data = fr['max_images']
+            self.max_images = data[()]
