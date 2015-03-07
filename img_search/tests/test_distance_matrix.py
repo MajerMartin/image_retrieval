@@ -68,7 +68,7 @@ class DistanceMatrixTestClass(unittest.TestCase):
 
         dm.add_images(imgs[:6,:,::-1], features[:6,:])
 
-        filename = 'test'
+        filename = 'test_dm'
         dm.save(filename)
 
         dm_copy = img_search.distance_matrix.ImageSearchDistanceMatrix(max_images=10, thumbnail_size=(10,10,3))
