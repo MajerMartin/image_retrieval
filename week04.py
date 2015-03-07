@@ -16,7 +16,7 @@ import img_search
 
 h5_imgs_fn = '/Users/martin.majer/PycharmProjects/PR4/data/sun_sample.hdf5'
 h5_fts_fn = h5_imgs_fn + '.features.hdf5'
-n = 2000
+n = 500
 
 dm = img_search.distance_matrix.ImageSearchDistanceMatrix(max_images=n, thumbnail_size=(150,150,3))
 
@@ -77,6 +77,10 @@ print len(dm_copy.images)
 print len(dm_copy.features)
 print dm_copy.max_images
 print dm_copy.thumbnail_size
+
+# <codecell>
+
+(np.triu(dm.distance_matrix) == dm_copy.distance_matrix).all()
 
 # <codecell>
 

@@ -13,6 +13,7 @@ with h5py.File(h5_fts_fn,'r') as fr_features, h5py.File(h5_imgs_fn,'r') as fr_im
     imgs = np.array(fr_imgs['imgs'][:7][:,:,::-1])
     imgs = imgs.astype(np.float32) * 255
 
+
 class DistanceMatrixTestClass(unittest.TestCase):
 
     def test_distance_matrix_init(self):
