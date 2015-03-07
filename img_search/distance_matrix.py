@@ -14,6 +14,12 @@ class ImageSearchDistanceMatrix(object):
         self.features = []
 
     def add_images(self, images, features):
+        '''
+        Add images, their features and calculate distance matrix.
+        :param images: list of images
+        :param features: list of features
+        :return: nothing
+        '''
         dim = (self.thumbnail_size[0], self.thumbnail_size[1])
 
         # add resized images
@@ -68,12 +74,23 @@ class ImageSearchDistanceMatrix(object):
         self.distance_matrix += self.distance_matrix.T
 
     def find_k_nearest_by_index(self, img_index, k=3):
+        '''
+        Find K nearest neighbors by image index.
+        :param img_index: index of searched image
+        :param k: neighbors count
+        :return: k nearest neighbors
+        '''
         row = self.distance_matrix[img_index,:]
-        closest = np.argsort(row)
+        nearest = np.argsort(row)
 
-        return closest[:k]
+        return nearest[:k]
 
     def get_images(self, indexes):
+        '''
+        Get images on corresponding indexes.
+        :param indexes: indexes of images
+        :return: images
+        '''
         images = []
 
         for index in indexes:
@@ -82,6 +99,11 @@ class ImageSearchDistanceMatrix(object):
         return images
 
     def save(self, filename):
+        '''
+        Save object variables to HDF5.
+        :param filename: name of HDF5 file
+        :return: nothing
+        '''
         with h5py.File(filename,'w') as fw:
             fw['images'] = self.images
             fw['features'] = self.features
@@ -90,6 +112,11 @@ class ImageSearchDistanceMatrix(object):
             fw['distance_matrix'] = np.triu(self.distance_matrix)
 
     def load(self, filename):
+        '''
+        Clear current object and load variables from HDF5 file.
+        :param filename: name of HDF5 file
+        :return: nothing
+        '''
         with h5py.File(filename,'r') as fr:
             # load as list instead of numpy array
             self.images = []

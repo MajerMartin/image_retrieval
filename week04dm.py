@@ -43,6 +43,7 @@ print len(dm.features)
 
 # <codecell>
 
+%%timeit
 dm.add_images(imgs[:2],features[:2])
 
 # <codecell>

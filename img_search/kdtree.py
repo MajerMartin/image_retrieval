@@ -1,6 +1,5 @@
 __author__ = 'martin.majer'
 
-import numpy as np
 import cv2
 import h5py
 import itertools
@@ -16,6 +15,12 @@ class ImageSearchKDTree(object):
         self.features = []
 
     def add_images(self, images, features):
+        '''
+        Add images, their features and calculate KDTree.
+        :param images: list of images
+        :param features: list of features
+        :return: nothing
+        '''
         dim = (self.thumbnail_size[0], self.thumbnail_size[1])
 
         # add resized images
@@ -44,11 +49,22 @@ class ImageSearchKDTree(object):
         self.tree = KDTree(self.features, metric='euclidean')
 
     def find_k_nearest_by_index(self, img_index, k_neighbors=3):
-        closest = self.tree.query(self.features[img_index], k=k_neighbors, return_distance=False)
+        '''
+        Find K nearest neighbors by image index.
+        :param img_index: index of searched image
+        :param k: neighbors count
+        :return: k nearest neighbors
+        '''
+        nearest = self.tree.query(self.features[img_index], k=k_neighbors, return_distance=False)
 
-        return list(itertools.chain(*closest))
+        return list(itertools.chain(*nearest))
 
     def get_images(self, indexes):
+        '''
+        Get images on corresponding indexes.
+        :param indexes: indexes of images
+        :return: images
+        '''
         images = []
 
         for index in indexes:
@@ -57,6 +73,11 @@ class ImageSearchKDTree(object):
         return images
 
     def save(self, filename):
+        '''
+        Save object variables to HDF5.
+        :param filename: name of HDF5 file
+        :return: nothing
+        '''
         with h5py.File(filename,'w') as fw:
             fw['images'] = self.images
             fw['features'] = self.features
@@ -64,6 +85,11 @@ class ImageSearchKDTree(object):
             fw['thumbnail_size'] = self.thumbnail_size
 
     def load(self, filename):
+        '''
+        Clear current object, load variables from HDF5 file and recalculate KDTree.
+        :param filename: name of HDF5 file
+        :return: nothing
+        '''
         with h5py.File(filename,'r') as fr:
             # load as list instead of numpy array
             self.images = []
