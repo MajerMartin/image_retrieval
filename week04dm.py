@@ -46,13 +46,29 @@ print 'len(features):', len(dm.features)
 # <codecell>
 
 dm.add_images(imgs[:2],features[:2])
-print 'len(imgages):', len(dm.images)
+print 'len(images):', len(dm.images)
 print 'len(features):', len(dm.features)
 
 # <codecell>
 
-k = 2
-neighbors = dm.find_k_nearest_by_index(k)
+n = 5000
+dm = img_search.distance_matrix.ImageSearchDistanceMatrix(max_images=n, thumbnail_size=(150,150,3))
+
+with h5py.File(h5_imgs_fn,'r') as fr_imgs, h5py.File(h5_fts_fn,'r') as fr_features:
+    features = np.copy(fr_features['score'][:n])
+    last = 0
+    for i in range(0,n,200):
+        img = np.array(fr_imgs['imgs'][last:i][:,:,::-1])
+        img = img.astype(np.float32) * 255
+        img = img.astype(np.uint8)
+        dm.add_images(img, features[last:i])
+        last = i
+        print '\r', i, 'images', '|', len(dm.images), '|', last,
+
+# <codecell>
+
+index = 0
+neighbors = dm.find_k_nearest_by_index(index)
 print 'neighbors:', neighbors
 
 # <codecell>

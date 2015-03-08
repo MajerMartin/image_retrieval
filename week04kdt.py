@@ -40,7 +40,7 @@ kdt = img_search.kdtree.ImageSearchKDTree(max_images=n, thumbnail_size=(150,150,
 
 kdt.add_images(imgs[:n],features[:n])
 print 'tree:', kdt.tree
-print 'len(imgages):', len(kdt.images)
+print 'len(images):', len(kdt.images)
 print 'len(features):', len(kdt.features)
 
 # <codecell>
@@ -51,8 +51,8 @@ print 'len(features):', len(kdt.features)
 
 # <codecell>
 
-k = 2
-neighbors = kdt.find_k_nearest_by_index(k)
+index = 0
+neighbors = kdt.find_k_nearest_by_index(index)
 print 'neighbors:', neighbors
 
 # <codecell>
