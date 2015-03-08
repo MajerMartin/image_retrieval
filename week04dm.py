@@ -18,13 +18,11 @@ h5_imgs_fn = '/Users/martin.majer/PycharmProjects/PR4/data/sun_sample.hdf5'
 h5_fts_fn = h5_imgs_fn + '.features.hdf5'
 n = 500
 
-dm = img_search.distance_matrix.ImageSearchDistanceMatrix(max_images=n, thumbnail_size=(150,150,3))
-
 # <codecell>
 
 with h5py.File(h5_fts_fn,'r') as fr_features:
     features = np.copy(fr_features['score'][:n])
-    print 'features:', features.shape
+    print 'features.shape:', features.shape
 
 # <codecell>
 
@@ -32,24 +30,30 @@ with h5py.File(h5_imgs_fn,'r') as fr_imgs:
     imgs = np.array(fr_imgs['imgs'][:n][:,:,::-1])
     imgs = imgs.astype(np.float32) * 255
     imgs = imgs.astype(np.uint8)
-    print 'imgs:', imgs.shape
+    print 'imgs.shape:', imgs.shape
+
+# <codecell>
+
+dm = img_search.distance_matrix.ImageSearchDistanceMatrix(max_images=n, thumbnail_size=(150,150,3))
 
 # <codecell>
 
 dm.add_images(imgs[:n],features[:n])
-print dm.distance_matrix.shape
-print len(dm.images)
-print len(dm.features)
+print 'distance_matrix.shape:', dm.distance_matrix.shape
+print 'len(imgages):', len(dm.images)
+print 'len(features):', len(dm.features)
 
 # <codecell>
 
-%%timeit
 dm.add_images(imgs[:2],features[:2])
+print 'len(imgages):', len(dm.images)
+print 'len(features):', len(dm.features)
 
 # <codecell>
 
-neighbors = dm.find_k_nearest_by_index(2)
-print neighbors
+k = 2
+neighbors = dm.find_k_nearest_by_index(k)
+print 'neighbors:', neighbors
 
 # <codecell>
 
@@ -69,15 +73,20 @@ dm.save(filename)
 # <codecell>
 
 dm_copy = img_search.distance_matrix.ImageSearchDistanceMatrix(max_images=10, thumbnail_size=(10,10,3))
+print 'distance_matrix.shape:', dm_copy.distance_matrix
+print 'len(images):', len(dm_copy.images)
+print 'len(features):', len(dm_copy.features)
+print 'max_images:', dm_copy.max_images
+print 'thumbnail_size:', dm_copy.thumbnail_size
+print '-' * 40
+
 dm_copy.load(filename)
 
-# <codecell>
-
-print dm_copy.distance_matrix.shape
-print len(dm_copy.images)
-print len(dm_copy.features)
-print dm_copy.max_images
-print dm_copy.thumbnail_size
+print 'distance_matrix.shape:', dm_copy.distance_matrix.shape
+print 'len(images):', len(dm_copy.images)
+print 'len(features):', len(dm_copy.features)
+print 'max_images:', dm_copy.max_images
+print 'thumbnail_size:', dm_copy.thumbnail_size
 
 # <codecell>
 
