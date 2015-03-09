@@ -40,7 +40,7 @@ dm = img_search.distance_matrix.ImageSearchDistanceMatrix(max_images=n, thumbnai
 
 dm.add_images(imgs[:n],features[:n])
 print 'distance_matrix.shape:', dm.distance_matrix.shape
-print 'len(imgages):', len(dm.images)
+print 'len(images):', len(dm.images)
 print 'len(features):', len(dm.features)
 
 # <codecell>

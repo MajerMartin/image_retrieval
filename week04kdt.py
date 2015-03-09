@@ -46,7 +46,7 @@ print 'len(features):', len(kdt.features)
 # <codecell>
 
 kdt.add_images(imgs[:2],features[:2])
-print 'len(imgages):', len(kdt.images)
+print 'len(images):', len(kdt.images)
 print 'len(features):', len(kdt.features)
 
 # <codecell>
