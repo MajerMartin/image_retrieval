@@ -23,13 +23,16 @@ class ImageSearchDistanceMatrix(object):
             print 'Creating directory...'
             os.makedirs(storage_dir)
             os.makedirs(storage_dir + thumbs)
+            print 'Directory created.'
 
         if os.path.isfile(self.data_path):
             print 'Loading data file...'
             self.load()
+            print 'Data file loaded.'
         else:
             print 'Creating data file...'
             self.save()
+            print 'Data file created.'
 
     def add_images(self, images, features):
         '''
@@ -54,6 +57,7 @@ class ImageSearchDistanceMatrix(object):
             img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
             img_resized = img_resized.astype(np.uint8)
             index = str(end - len(images) + i)
+            print '\rAdding image #%s' % index,
             imsave(self.storage_dir + thumbs + index + '.jpg', img_resized)
 
         # initialize new distance matrix
@@ -78,7 +82,9 @@ class ImageSearchDistanceMatrix(object):
 
                 self.distance_matrix = np.concatenate((self.distance_matrix, new_col), axis=1)
 
+        print '\nTransposing matrix...'
         self.distance_matrix += self.distance_matrix.T
+        print 'Transposed.'
 
     def find_k_nearest_by_index(self, img_index, k=3):
         '''
