@@ -151,7 +151,6 @@ class ImageSearchDistanceMatrix(object):
             # load whole matrix if exists
             try:
                 self.distance_matrix = squareform(fr['distance_matrix'])
-                #self.distance_matrix = fr['distance_matrix'][:]
             except:
                 pass
 
