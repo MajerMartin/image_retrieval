@@ -2,6 +2,7 @@ import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 import h5py
+from scipy.spatial.distance import squareform
 
 import img_search.distance_matrix
 
@@ -85,6 +86,7 @@ class DistanceMatrixTestClass(unittest.TestCase):
         self.assertEqual(dm_copy.max_images, 100000)
         self.assertEqual(dm_copy.data_path, '/Users/martin.majer/PycharmProjects/PR4/data/dm/data_dm.hdf5')
         self.assertEqual(dm_copy.storage_dir, '/Users/martin.majer/PycharmProjects/PR4/data/dm/')
+        self.assertEqual(squareform(dm.distance_matrix).all(), squareform(dm_copy.distance_matrix).all())
 
 if __name__ == '__main__':
     unittest.main()

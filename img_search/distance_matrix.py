@@ -83,7 +83,7 @@ class ImageSearchDistanceMatrix(object):
                 self.distance_matrix = np.concatenate((self.distance_matrix, new_col), axis=1)
 
         print '\nTransposing matrix...'
-        self.distance_matrix += self.distance_matrix.T
+        self.distance_matrix = np.triu(self.distance_matrix).T + np.triu(self.distance_matrix)
         print 'Transposed.'
 
     def find_k_nearest_by_index(self, img_index, k=3):
@@ -124,9 +124,11 @@ class ImageSearchDistanceMatrix(object):
             fw['max_images'] = self.max_images
             fw['thumbnail_size'] = self.thumbnail_size
 
-            # create data set for images and don't save distance matrix when creating hdf5 file
+            # don't save distance matrix when creating hdf5 file
             if self.distance_matrix is not None:
+                print 'Saving...'
                 fw['distance_matrix'] = squareform(self.distance_matrix)
+                print 'Saved.'
 
     def load(self):
         '''
@@ -149,6 +151,7 @@ class ImageSearchDistanceMatrix(object):
             # load whole matrix if exists
             try:
                 self.distance_matrix = squareform(fr['distance_matrix'])
+                #self.distance_matrix = fr['distance_matrix'][:]
             except:
                 pass
 
