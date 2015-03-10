@@ -5,6 +5,7 @@ import cv2
 import h5py
 import os.path
 from scipy.misc import imsave
+from scipy.spatial.distance import squareform
 
 filename = 'data_dm.hdf5'
 thumbs = 'thumbs/'
@@ -30,7 +31,6 @@ class ImageSearchDistanceMatrix(object):
             print 'Creating data file...'
             self.save()
 
-
     def add_images(self, images, features):
         '''
         Save images, add their features and calculate distance matrix.
@@ -53,9 +53,8 @@ class ImageSearchDistanceMatrix(object):
         for i, img in enumerate(images):
             img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
             img_resized = img_resized.astype(np.uint8)
-            img_index = str(end - len(images) + i)
-            print i, img_index
-            imsave(self.storage_dir + thumbs + img_index + '.jpg', img_resized)
+            index = str(end - len(images) + i)
+            imsave(self.storage_dir + thumbs + index + '.jpg', img_resized)
 
         # initialize new distance matrix
         if self.distance_matrix is None:
@@ -102,7 +101,8 @@ class ImageSearchDistanceMatrix(object):
         images = []
 
         for index in indexes:
-            images.append(self.images[index])
+            img = cv2.imread(self.storage_dir + thumbs + str(index) + '.jpg')
+            images.append(img)
 
         return images
 
@@ -120,7 +120,7 @@ class ImageSearchDistanceMatrix(object):
 
             # create data set for images and don't save distance matrix when creating hdf5 file
             if self.distance_matrix is not None:
-                fw['distance_matrix'] = self.distance_matrix
+                fw['distance_matrix'] = squareform(self.distance_matrix)
 
     def load(self):
         '''
@@ -128,18 +128,24 @@ class ImageSearchDistanceMatrix(object):
         :return: nothing
         '''
         with h5py.File(self.data_path,'r') as fr:
-            self.features = []
+            # load features as list
             for feat in fr['features']:
                 self.features.append(feat)
 
-            # load whole matrix
-            self.distance_matrix = None
-            #self.distance_matrix = fr['distance_matrix'][:]
-
-            # load as list
-            thumbnail_size = fr['thumbnail_size']
-            self.thumbnail_size = (thumbnail_size[0], thumbnail_size[1], thumbnail_size[2])
-
             # reading scalar dataset
+            data = fr['data_path']
+            self.data_path = data[()]
+            data = fr['storage_dir']
+            self.storage_dir = data[()]
             data = fr['max_images']
             self.max_images = data[()]
+
+            # load whole matrix if exists
+            try:
+                self.distance_matrix = squareform(fr['distance_matrix'])
+            except:
+                pass
+
+            # load as list and save as tuple
+            thumbnail_size = fr['thumbnail_size']
+            self.thumbnail_size = (thumbnail_size[0], thumbnail_size[1], thumbnail_size[2])

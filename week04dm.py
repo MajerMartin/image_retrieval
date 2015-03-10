@@ -108,3 +108,13 @@ print 'thumbnail_size:', dm_copy.thumbnail_size
 
 (np.triu(dm.distance_matrix) == dm_copy.distance_matrix).all()
 
+# <codecell>
+
+from scipy.spatial.distance import squareform
+
+# <codecell>
+
+x = np.array([[0, 1, 2 ,3], [1, 0, 4 ,5], [2, 4, 0 ,6], [3, 5, 6 ,0]])
+print x
+squareform(x)
+
