@@ -3,55 +3,63 @@ __author__ = 'martin.majer'
 import numpy as np
 import cv2
 import h5py
+import os.path
+from scipy.misc import imsave
 
+filename = 'data_dm.hdf5'
+thumbs = 'thumbs/'
 
 class ImageSearchDistanceMatrix(object):
-    def __init__(self, max_images=100000, thumbnail_size=(150,150,3)):
+    def __init__(self, storage_dir, max_images=100000, thumbnail_size=(150,150,3)):
+        self.storage_dir = storage_dir
+        self.data_path = storage_dir + filename
         self.max_images = max_images
         self.thumbnail_size = thumbnail_size
         self.distance_matrix = None
-        self.images = []
         self.features = []
+
+        if not os.path.exists(storage_dir):
+            print 'Creating directory...'
+            os.makedirs(storage_dir)
+            os.makedirs(storage_dir + thumbs)
+
+        if os.path.isfile(self.data_path):
+            print 'Loading data file...'
+            self.load()
+        else:
+            print 'Creating data file...'
+            self.save()
+
 
     def add_images(self, images, features):
         '''
-        Add images, their features and calculate distance matrix.
+        Save images, add their features and calculate distance matrix.
         :param images: list of images
         :param features: list of features
         :return: nothing
         '''
-        dim = (self.thumbnail_size[0], self.thumbnail_size[1])
 
-        # add resized images
-        if len(images.shape) == 3:
-            if (len(self.images) + 1) > self.max_images:
-                print 'You can add only %d more image(s). Maximum limit achieved.' % (self.max_images - len(self.images))
-                return
-            else:
-                img_resized = cv2.resize(images, dim, interpolation = cv2.INTER_NEAREST)  # INTER_CUBIC changes pixel values
-                self.images.append(img_resized)
-        else:
-            if (len(self.images) + len(images)) > self.max_images:
-                print 'You can add only %d more image(s). Maximum limit achieved.' % (self.max_images - len(self.images))
-                return
-            else:
-                for img in images:
-                    img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
-                    self.images.append(img_resized)
+        if (len(self.features) + len(features)) > self.max_images:
+            raise ValueError('You can add only %d more image(s). Maximum limit achieved.' % (self.max_images - len(self.features)))
 
         # add features
-        if len(features.shape) == 1:
-            self.features.append(features)
-            start = len(self.features) - 1
-        else:
-            self.features.extend(features)
-            start = len(self.features) - len(features)
-
+        self.features.extend(features)
+        start = len(self.features) - len(features)
         end = len(self.features)
+
+        # save resized images
+        dim = (self.thumbnail_size[0], self.thumbnail_size[1])
+
+        for i, img in enumerate(images):
+            img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
+            img_resized = img_resized.astype(np.uint8)
+            img_index = str(end - len(images) + i)
+            print i, img_index
+            imsave(self.storage_dir + thumbs + img_index + '.jpg', img_resized)
 
         # initialize new distance matrix
         if self.distance_matrix is None:
-            self.distance_matrix = np.zeros((end, end))
+            self.distance_matrix = np.zeros((end, end), dtype=np.float16)
 
             # fill new distance matrix
             for i in range(0, end):
@@ -98,38 +106,35 @@ class ImageSearchDistanceMatrix(object):
 
         return images
 
-    def save(self, filename):
+    def save(self):
         '''
         Save object variables to HDF5.
-        :param filename: name of HDF5 file
         :return: nothing
         '''
-        with h5py.File(filename,'w') as fw:
-            fw['images'] = self.images
+        with h5py.File(self.data_path,'w') as fw:
             fw['features'] = self.features
+            fw['data_path'] = self.data_path
+            fw['storage_dir'] = self.storage_dir
             fw['max_images'] = self.max_images
             fw['thumbnail_size'] = self.thumbnail_size
-            fw['distance_matrix'] = np.triu(self.distance_matrix)
 
-    def load(self, filename):
+            # create data set for images and don't save distance matrix when creating hdf5 file
+            if self.distance_matrix is not None:
+                fw['distance_matrix'] = self.distance_matrix
+
+    def load(self):
         '''
-        Clear current object and load variables from HDF5 file.
-        :param filename: name of HDF5 file
+        Load variables from HDF5 file.
         :return: nothing
         '''
-        with h5py.File(filename,'r') as fr:
-            # load as list instead of numpy array
-            self.images = []
-            for img in fr['images']:
-                 self.images.append(img)
-
+        with h5py.File(self.data_path,'r') as fr:
             self.features = []
             for feat in fr['features']:
                 self.features.append(feat)
 
             # load whole matrix
             self.distance_matrix = None
-            self.distance_matrix = fr['distance_matrix'][:]
+            #self.distance_matrix = fr['distance_matrix'][:]
 
             # load as list
             thumbnail_size = fr['thumbnail_size']
