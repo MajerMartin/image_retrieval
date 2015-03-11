@@ -60,7 +60,9 @@ class ImageSearchKDTree(object):
             print '\rAdding image #%s' % index,
             imsave(self.storage_dir + thumbs + index + '.jpg', img_resized)
 
+        print '\nCalculating KDTree...'
         self.tree = KDTree(self.features, metric='euclidean')
+        print 'Calculated.'
 
     def find_k_nearest_by_index(self, img_index, k_neighbors=3):
         '''
