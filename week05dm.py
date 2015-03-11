@@ -17,7 +17,7 @@ import img_search
 h5_imgs_fn = '/Users/martin.majer/PycharmProjects/PR4/data/sun_sample.hdf5'
 h5_fts_fn = h5_imgs_fn + '.features.hdf5'
 storage_dir = '/Users/martin.majer/PycharmProjects/PR4/data/dm/'
-n = 4000
+n = 10000
 
 # <codecell>
 
@@ -47,8 +47,9 @@ dm.save()
 
 # <codecell>
 
-index = 21
-neighbors = dm.find_k_nearest_by_index(index)
+index = 1234
+k = 5
+neighbors = dm.find_k_nearest_by_index(index, k)
 print 'neighbors:', neighbors
 
 # <codecell>
