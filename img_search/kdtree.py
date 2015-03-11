@@ -3,16 +3,37 @@ __author__ = 'martin.majer'
 import cv2
 import h5py
 import itertools
+import os.path
+import numpy as np
+from scipy.misc import imsave
 from sklearn.neighbors import KDTree
 
+filename = 'data_kdt.hdf5'
+thumbs = 'thumbs/'
 
 class ImageSearchKDTree(object):
-    def __init__(self, max_images=100000, thumbnail_size=(150,150,3)):
+    def __init__(self, storage_dir, max_images=100000, thumbnail_size=(150,150,3)):
+        self.storage_dir = storage_dir
+        self.data_path = storage_dir + filename
         self.max_images = max_images
         self.thumbnail_size = thumbnail_size
         self.tree = None
-        self.images = []
         self.features = []
+
+        if not os.path.exists(storage_dir):
+            print 'Creating directory...'
+            os.makedirs(storage_dir)
+            os.makedirs(storage_dir + thumbs)
+            print 'Directory created.'
+
+        if os.path.isfile(self.data_path):
+            print 'Loading data file...'
+            self.load()
+            print 'Data file loaded.'
+        else:
+            print 'Creating data file...'
+            self.save()
+            print 'Data file created.'
 
     def add_images(self, images, features):
         '''
@@ -21,30 +42,23 @@ class ImageSearchKDTree(object):
         :param features: list of features
         :return: nothing
         '''
-        dim = (self.thumbnail_size[0], self.thumbnail_size[1])
-
-        # add resized images
-        if len(images.shape) == 3:
-            if (len(self.images) + 1) > self.max_images:
-                print 'You can add only %d more image(s). Maximum limit achieved.' % (self.max_images - len(self.images))
-                return
-            else:
-                img_resized = cv2.resize(images, dim, interpolation = cv2.INTER_NEAREST)  # INTER_CUBIC changes pixel values
-                self.images.append(img_resized)
-        else:
-            if (len(self.images) + len(images)) > self.max_images:
-                print 'You can add only %d more image(s). Maximum limit achieved.' % (self.max_images - len(self.images))
-                return
-            else:
-                for img in images:
-                    img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
-                    self.images.append(img_resized)
+        if (len(self.features) + len(features)) > self.max_images:
+            raise ValueError('You can add only %d more image(s). Maximum limit achieved.' % (self.max_images - len(self.features)))
 
         # add features
-        if len(features.shape) == 1:
-            self.features.append(features)
-        else:
-            self.features.extend(features)
+        self.features.extend(features)
+        start = len(self.features) - len(features)
+        end = len(self.features)
+
+        # save resized images
+        dim = (self.thumbnail_size[0], self.thumbnail_size[1])
+
+        for i, img in enumerate(images):
+            img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
+            img_resized = img_resized.astype(np.uint8)
+            index = str(end - len(images) + i)
+            print '\rAdding image #%s' % index,
+            imsave(self.storage_dir + thumbs + index + '.jpg', img_resized)
 
         self.tree = KDTree(self.features, metric='euclidean')
 
@@ -68,46 +82,45 @@ class ImageSearchKDTree(object):
         images = []
 
         for index in indexes:
-            images.append(self.images[index])
+            img = cv2.imread(self.storage_dir + thumbs + str(index) + '.jpg')
+            images.append(img)
 
         return images
 
-    def save(self, filename):
+    def save(self):
         '''
         Save object variables to HDF5.
-        :param filename: name of HDF5 file
         :return: nothing
         '''
-        with h5py.File(filename,'w') as fw:
-            fw['images'] = self.images
+        with h5py.File(self.data_path,'w') as fw:
             fw['features'] = self.features
+            fw['data_path'] = self.data_path
+            fw['storage_dir'] = self.storage_dir
             fw['max_images'] = self.max_images
             fw['thumbnail_size'] = self.thumbnail_size
 
-    def load(self, filename):
+    def load(self):
         '''
-        Clear current object, load variables from HDF5 file and recalculate KDTree.
-        :param filename: name of HDF5 file
+        Load variables from HDF5 file and rebuild KDTree.
         :return: nothing
         '''
-        with h5py.File(filename,'r') as fr:
-            # load as list instead of numpy array
-            self.images = []
-            for img in fr['images']:
-                self.images.append(img)
-
-            self.features = []
+        with h5py.File(self.data_path,'r') as fr:
+            # load features as list
             for feat in fr['features']:
                 self.features.append(feat)
 
-            # rebuild KDTree
-            self.tree = None
-            self.tree = KDTree(self.features, metric='euclidean')
-
-            # load as list
-            thumbnail_size = fr['thumbnail_size']
-            self.thumbnail_size = (thumbnail_size[0], thumbnail_size[1], thumbnail_size[2])
-
             # reading scalar dataset
+            data = fr['data_path']
+            self.data_path = data[()]
+            data = fr['storage_dir']
+            self.storage_dir = data[()]
             data = fr['max_images']
             self.max_images = data[()]
+
+            # build KDTree
+            if len(self.features) > 0:
+                self.tree = KDTree(self.features, metric='euclidean')
+
+            # load as list and save as tuple
+            thumbnail_size = fr['thumbnail_size']
+            self.thumbnail_size = (thumbnail_size[0], thumbnail_size[1], thumbnail_size[2])
