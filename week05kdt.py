@@ -47,7 +47,7 @@ kdt.save()
 
 # <codecell>
 
-index = 1274
+index = 1992
 k = 5
 neighbors = kdt.find_k_nearest_by_index(index, k)
 print 'neighbors:', neighbors

@@ -47,7 +47,7 @@ dm.save()
 
 # <codecell>
 
-index = 1234
+index = 1992
 k = 5
 neighbors = dm.find_k_nearest_by_index(index, k)
 print 'neighbors:', neighbors
