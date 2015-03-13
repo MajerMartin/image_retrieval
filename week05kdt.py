@@ -38,6 +38,8 @@ with h5py.File(h5_imgs_fn,'r') as fr_imgs:
         img = img.astype(np.float32) * 255
         img = img.astype(np.uint8)
         kdt.add_images(img, features[last:i])
+        #for j in range(0, 10):
+        #    kdt.add_images(img, features[last:i])
         last = i
         print '-' * 35, i
 
@@ -47,7 +49,7 @@ kdt.save()
 
 # <codecell>
 
-index = 1992
+index = 322
 k = 5
 neighbors = kdt.find_k_nearest_by_index(index, k)
 print 'neighbors:', neighbors

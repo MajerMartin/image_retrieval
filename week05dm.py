@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import h5py
 import cv2
+import os.path
 
 import img_search
 
@@ -47,7 +48,7 @@ dm.save()
 
 # <codecell>
 
-index = 1992
+index = 322
 k = 5
 neighbors = dm.find_k_nearest_by_index(index, k)
 print 'neighbors:', neighbors
