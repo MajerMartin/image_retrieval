@@ -1,3 +1,5 @@
+__author__ = 'martin.majer'
+
 import os
 import unittest
 import numpy as np
@@ -63,10 +65,10 @@ class DistanceMatrixTestClass(unittest.TestCase):
         self.assertEqual(len(images), 3)
         self.assertEqual(images[0].shape, (150, 150, 3))
 
-        # for img in images:
-        # plt.figure()
-        # plt.imshow(img[:,:,::-1])
-        #     plt.show()
+        #for img in images:
+        #   plt.figure()
+        #   plt.imshow(img[:,:,::-1])
+        #   plt.show()
 
     def test_distance_matrix_find_k_nearest_by_index(self):
         dm = img_search.distance_matrix.ImageSearchDistanceMatrix(self.storage_dir)

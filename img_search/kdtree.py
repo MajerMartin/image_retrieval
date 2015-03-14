@@ -8,13 +8,13 @@ import numpy as np
 from scipy.misc import imsave
 from sklearn.neighbors import KDTree
 
-filename = 'data_kdt.hdf5'
-thumbs = 'thumbs/'
 
 class ImageSearchKDTree(object):
-    def __init__(self, storage_dir, max_images=100000, thumbnail_size=(150,150,3)):
+    def __init__(self, storage_dir, max_images=100000, thumbnail_size=(150, 150, 3)):
+        self.filename = 'data_kdt.hdf5'
+        self.thumbs = 'thumbs'
         self.storage_dir = storage_dir
-        self.data_path = storage_dir + filename
+        self.data_path = os.path.join(storage_dir, self.filename)
         self.max_images = max_images
         self.thumbnail_size = thumbnail_size
         self.tree = None
@@ -23,7 +23,7 @@ class ImageSearchKDTree(object):
         if not os.path.exists(storage_dir):
             print 'Creating directory...'
             os.makedirs(storage_dir)
-            os.makedirs(storage_dir + thumbs)
+            os.makedirs(os.path.join(storage_dir, self.thumbs))
             print 'Directory created.'
 
         if os.path.isfile(self.data_path):
@@ -43,22 +43,22 @@ class ImageSearchKDTree(object):
         :return: nothing
         '''
         if (len(self.features) + len(features)) > self.max_images:
-            raise ValueError('You can add only %d more image(s). Maximum limit achieved.' % (self.max_images - len(self.features)))
+            raise ValueError(
+                'You can add only %d more image(s). Maximum limit achieved.' % (self.max_images - len(self.features)))
 
         # add features
         self.features.extend(features)
-        start = len(self.features) - len(features)
         end = len(self.features)
 
         # save resized images
         dim = (self.thumbnail_size[0], self.thumbnail_size[1])
 
         for i, img in enumerate(images):
-            img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_NEAREST)
+            img_resized = cv2.resize(img, dim, interpolation=cv2.INTER_NEAREST)
             img_resized = img_resized.astype(np.uint8)
             index = str(end - len(images) + i)
             print '\rAdding image #%s' % index,
-            imsave(self.storage_dir + thumbs + index + '.jpg', img_resized)
+            imsave(os.path.join(self.storage_dir, self.thumbs, index) + '.jpg', img_resized)
 
         print '\nCalculating KDTree...'
         self.tree = KDTree(self.features, metric='euclidean')
@@ -84,7 +84,7 @@ class ImageSearchKDTree(object):
         images = []
 
         for index in indexes:
-            img = cv2.imread(self.storage_dir + thumbs + str(index) + '.jpg')
+            img = cv2.imread(os.path.join(self.storage_dir, self.thumbs, str(index)) + '.jpg')
             images.append(img)
 
         return images
@@ -94,8 +94,10 @@ class ImageSearchKDTree(object):
         Save object variables to HDF5.
         :return: nothing
         '''
-        with h5py.File(self.data_path,'w') as fw:
+        with h5py.File(self.data_path, 'w') as fw:
             fw['features'] = self.features
+            fw['filename'] = self.filename
+            fw['thumbs'] = self.thumbs
             fw['data_path'] = self.data_path
             fw['storage_dir'] = self.storage_dir
             fw['max_images'] = self.max_images
@@ -106,12 +108,16 @@ class ImageSearchKDTree(object):
         Load variables from HDF5 file and rebuild KDTree.
         :return: nothing
         '''
-        with h5py.File(self.data_path,'r') as fr:
+        with h5py.File(self.data_path, 'r') as fr:
             # load features as list
             for feat in fr['features']:
                 self.features.append(feat)
 
             # reading scalar dataset
+            data = fr['filename']
+            self.filename = data[()]
+            data = fr['thumbs']
+            self.thumbs = data[()]
             data = fr['data_path']
             self.data_path = data[()]
             data = fr['storage_dir']

@@ -7,7 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import h5py
 import cv2
-import os.path
 
 import img_search
 
