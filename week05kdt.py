@@ -45,11 +45,24 @@ with h5py.File(h5_imgs_fn,'r') as fr_imgs:
 
 # <codecell>
 
+#from sklearn.neighbors import KDTree
+#%load_ext memory_profiler
+#%memit -r 10 KDTree(kdt.features, metric='euclidean')
+#%timeit -n 10 KDTree(kdt.features, metric='euclidean')
+
+print ' 20000 features\t|\t10 loops, best of 3: 1.99 s per loop\t|\tpeak memory: 415.19 MiB, increment: 152.59 MiB'
+print ' 40000 features\t|\t10 loops, best of 3: 6.45 s per loop\t|\tpeak memory: 626.06 MiB, increment: 321.25 MiB'
+print ' 60000 features\t|\t10 loops, best of 3: 10.4 s per loop\t|\tpeak memory: 764.65 MiB, increment: 457.90 MiB'
+print ' 80000 features\t|\t10 loops, best of 3: 15.6 s per loop\t|\tpeak memory: 919.38 MiB, increment: 610.48 MiB'
+print '100000 features\t|\t10 loops, best of 3: 22.6 s per loop\t|\tpeak memory: 1135.96 MiB, increment: 825.71 MiB'
+
+# <codecell>
+
 kdt.save()
 
 # <codecell>
 
-index = 322
+index = 3222
 k = 5
 neighbors = kdt.find_k_nearest_by_index(index, k)
 print 'neighbors:', neighbors
