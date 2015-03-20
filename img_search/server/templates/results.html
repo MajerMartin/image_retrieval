@@ -6,4 +6,7 @@
 
 {% block body %}
     {{ msg }}
+    {% for filename in filenames %}
+    <br/><img src="{{ url_for('send_file', filename=filename) }}">
+    {% endfor %}
 {% endblock %}
