@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Image search
+{% endblock %}
+
+{% block body %}
+<form action="results" method="post" enctype="multipart/form-data">
+    <fieldset>
+        <label>
+            <span>File:</span>
+            <input type="file" name="search_file">
+        </label>
+        <label>
+            <span>URL:</span>
+            <input type="text" name="search_url">
+        </label>
+        <label>
+            <span>&nbsp;</span>
+            <input type="submit">
+        </label>
+    </fieldset>
+</form>
+{% endblock %}

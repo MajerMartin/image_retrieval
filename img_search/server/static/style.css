@@ -1,0 +1,9 @@
+body {
+        font-family: 'Open Sans', serif;
+}
+label {
+    display: block;
+}
+label span {
+    display: block; width: 100px; text-align: right; float: left; padding: 0 0.5em 0 0;
+}
