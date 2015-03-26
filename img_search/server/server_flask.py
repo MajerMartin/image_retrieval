@@ -185,17 +185,9 @@ def results():
         else:
             indexes = indexes[:k]
             distances = distances[:k]
+            kdt.save()
 
-
-
-        # zavolat save() az na konci po pripadnem smazani duplikatniho obrazku
-        kdt.save()
-
-
-        print indexes
-        print distances
-
-
+        # prepare list of files which will be printed
         for index in indexes:
             filenames.append(str(index) + '.jpg')
 
