@@ -123,6 +123,7 @@ def results():
 
     # list of images to be passed to render_template
     filenames = []
+    distances = []
 
     if search_url or search_file:
         if search_url:
@@ -167,18 +168,34 @@ def results():
         # add image and save thumbnail
         kdt.add_images([img_rgb], [score])
 
+        # find k nearest neighbors
+        k = 50
+        last = len(kdt.features) - 1
+        indexes, distances = kdt.find_k_nearest_by_index(last, k+1)
 
+        # check for duplicate image
+        if (distances[1] - distances[0]) < 0.001:
+            # remove duplicate image from database
+            duplicate = os.path.join(app.config['UPLOAD_FOLDER'], 'thumbs', str(last) + '.jpg')
+            os.remove(duplicate)
 
+            # do not print duplicate image
+            indexes = indexes[1:]
+            distances = distances[1:]
+        else:
+            indexes = indexes[:k]
+            distances = distances[:k]
 
 
 
         # zavolat save() az na konci po pripadnem smazani duplikatniho obrazku
         kdt.save()
 
-        # zavolat find()
-        indexes, distances = kdt.find_k_nearest_by_index(len(kdt.features) - 1, 6)
 
-        filenames = []
+        print indexes
+        print distances
+
+
         for index in indexes:
             filenames.append(str(index) + '.jpg')
 
@@ -186,7 +203,9 @@ def results():
     else:
         msg = 'Please provide URL or file.'
 
-    return render_template('results.html', msg=msg, filenames=filenames)
+    zipped = zip(filenames,distances)
+
+    return render_template('results.html', msg=msg, data=zipped)
 
 
 @app.route('/thumbs/<filename>')

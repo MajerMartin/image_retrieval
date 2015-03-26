@@ -7,10 +7,10 @@
 {% block body %}
     {{ msg }}
     <div id="results">
-    {% for filename in filenames %}
+    {% for filename, distance in data %}
         <div>
           <img src="{{ url_for('send_file', filename=filename) }}">
-          0.000
+          {{ distance }}
         </div>
     {% endfor %}
     </div>
