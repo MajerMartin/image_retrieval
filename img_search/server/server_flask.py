@@ -143,13 +143,15 @@ def results():
                 msg = 'Please provide valid image file.'
                 return render_template('results.html', msg=msg, filenames=filenames)
 
-
         # open image using opencv, resize it and crop it (BGR, float32)
         img = cv2.imread(path)
         dim = keep_ratio(img.shape, height, width)
         img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_CUBIC)
         img_cropped = crop(img_resized, height, width)
         img_cropped = img_cropped.astype(np.float32)
+
+        # delete temporary image
+        os.remove(path)
 
         # calculate features (or choose random for local testing)
         if caffe_toggle:
@@ -159,21 +161,19 @@ def results():
                 score = fr_features['score'][randint(0, 9999)]
 
         # convert image to RGB uint8
+        img_rgb = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2RGB)
+        img_rgb = img_rgb.astype(np.uint8)
+
+        # add image and save thumbnail
+        kdt.add_images([img_rgb], [score])
 
 
 
 
 
-        # zavolat add_images()
-        print 'len(kdt.features) before\t|\t', len(kdt.features)
-        kdt.add_images([img_cropped], [score])
-        print 'len(kdt.features) after\t|\t', len(kdt.features)
 
-        # zavolat save()
+        # zavolat save() az na konci po pripadnem smazani duplikatniho obrazku
         kdt.save()
-
-        # smazat obrazek
-        os.remove(path)
 
         # zavolat find()
         indexes, distances = kdt.find_k_nearest_by_index(len(kdt.features) - 1, 6)
