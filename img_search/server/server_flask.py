@@ -179,6 +179,9 @@ def results():
             duplicate = os.path.join(app.config['UPLOAD_FOLDER'], 'thumbs', str(last) + '.jpg')
             os.remove(duplicate)
 
+            # remove features of duplicate image
+            del kdt.features[-1]
+
             # do not print duplicate image
             indexes = indexes[1:]
             distances = distances[1:]
@@ -190,12 +193,10 @@ def results():
         # prepare list of files which will be printed
         for index in indexes:
             filenames.append(str(index) + '.jpg')
-
-        print filenames
     else:
         msg = 'Please provide URL or file.'
 
-    zipped = zip(filenames,distances)
+    zipped = zip(filenames, distances)
 
     return render_template('results.html', msg=msg, data=zipped)
 
