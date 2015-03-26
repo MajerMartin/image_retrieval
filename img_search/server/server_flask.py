@@ -49,7 +49,7 @@ app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 def check_allowed(filename):
     '''
     Check whether uploaded file is image or not.
-    :param filename: name of uploaded image
+    :param filename: name of the uploaded image
     :return: boolean value
     '''
     return '.' in filename and filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
@@ -70,23 +70,29 @@ def results():
     :return: rendered template from html file
     '''
 
+    # get data from form
     search_file = request.files['search_file']
     search_url = request.form['search_url']
 
+    # path to temporary image file
+    filename = 'img.jpg'
+    path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+    # list of images to be passed to render_template
+    filenames = []
+
+    ####################################################################################
+    # DODELAT AZ BUDE FUNGOVAT HLEDANI PRO UPLOADOVANY OBRAZEK
     if search_url:
         msg = 'Searching using URL (%s)' % search_url
-        filenames = []
-        print search_url
-        filename = 'img.jpg'
-        path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # pouzit check_allowed
         urllib.urlretrieve(search_url, path)
+    ####################################################################################
 
     elif search_file and check_allowed(search_file.filename):
-        msg = 'Searching using file (name %s)' % search_file.filename
+        msg = 'Searching using file (filename: %s)' % search_file.filename
 
         # docasne ulozit obrazek na disk
-        filename = 'img.jpg'
-        path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         search_file.save(path)
 
         # otevrit obrazek
@@ -123,12 +129,16 @@ def results():
 
     else:
         msg = 'Please provide URL or file.'
-        filenames = []
 
     return render_template('results.html', msg=msg, filenames=filenames)
 
 @app.route('/thumbs/<filename>')
 def send_file(filename):
+    '''
+    Send image from directory to server.
+    :param filename: name of the image
+    :return: image
+    '''
     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'thumbs'), filename)
 
 if __name__ == '__main__':
