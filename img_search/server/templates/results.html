@@ -6,7 +6,12 @@
 
 {% block body %}
     {{ msg }}
+    <div id="results">
     {% for filename in filenames %}
-    <br/><img src="{{ url_for('send_file', filename=filename) }}">
+        <div>
+          <img src="{{ url_for('send_file', filename=filename) }}">
+          0.000
+        </div>
     {% endfor %}
+    </div>
 {% endblock %}

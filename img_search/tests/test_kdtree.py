@@ -78,8 +78,9 @@ class KDTreeTestClass(unittest.TestCase):
 
         kdt.add_images(self.imgs[:6, :, ::-1], self.features[:6, :])
 
-        indexes = kdt.find_k_nearest_by_index(1)
+        indexes, distances = kdt.find_k_nearest_by_index(1)
         self.assertEqual(len(indexes), 3)
+        self.assertEqual(len(distances), 3)
 
     def test_kdtree_load(self):
         kdt = img_search.kdtree.ImageSearchKDTree(self.storage_dir)

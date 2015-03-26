@@ -2,6 +2,10 @@ from flask import Flask, request, render_template, send_from_directory
 from img_search import kdtree
 import os.path
 import cv2
+import urllib
+import caffe
+
+# local testing
 import h5py
 from random import randint
 
@@ -13,7 +17,7 @@ n = 100000
 
 app = Flask(__name__)
 
-# pravdepodobne zmena na metacentrum
+#  zmena na metacentrum
 app.config['UPLOAD_FOLDER'] = '/Users/martin.majer/PycharmProjects/PR4/data/kdt_server/'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -34,6 +38,12 @@ def results():
 
     if search_url:
         msg = 'Searching using URL (%s)' % (search_url)
+        filenames = []
+        print search_url
+        filename = 'img.jpg'
+        path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        urllib.urlretrieve(search_url, path)
+
     elif search_file and check_allowed(search_file.filename):
         msg = 'Searching using file (name %s)' % (search_file.filename)
 
@@ -45,7 +55,9 @@ def results():
         # otevrit obrazek
         img = cv2.imread(path)
         print 'img.shape\t|\t', img.shape
-        # upravit zmenseni KDT pro zachovani ratia ?
+        # ukladat i original?
+        # obratit barvy
+        # oriznout na ctverec pro zachovani pomeru stran
 
         # spocitat features - zatim random
         with h5py.File(h5_fts_fn, 'r') as fr_features:
@@ -64,7 +76,7 @@ def results():
         os.remove(path)
 
         # zavolat find()
-        indexes = kdt.find_k_nearest_by_index(len(kdt.features) - 1)
+        indexes, distances = kdt.find_k_nearest_by_index(len(kdt.features) - 1, 6)
 
         filenames = []
         for index in indexes:
@@ -74,6 +86,7 @@ def results():
 
     else:
         msg = 'Please provide URL or file.'
+        filenames = []
 
     return render_template('results.html', msg=msg, filenames=filenames)
 

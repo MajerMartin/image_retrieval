@@ -7,3 +7,13 @@ label {
 label span {
     display: block; width: 100px; text-align: right; float: left; padding: 0 0.5em 0 0;
 }
+div#results img {
+    width: 150px;
+    height: 150px;
+}
+div#results div {
+    float: left;
+    height: 200px;
+    width: 150px;
+    margin: 0 1px 1px 0;
+}

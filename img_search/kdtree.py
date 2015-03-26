@@ -71,9 +71,9 @@ class ImageSearchKDTree(object):
         :param k: neighbors count
         :return: k nearest neighbors
         '''
-        nearest = self.tree.query(self.features[img_index], k=k_neighbors, return_distance=False)
+        distances, nearest = self.tree.query(self.features[img_index], k=k_neighbors, return_distance=True)
 
-        return list(itertools.chain(*nearest))
+        return list(itertools.chain(*nearest)), list(itertools.chain(*distances))
 
     def get_images(self, indexes):
         '''
