@@ -13,7 +13,7 @@ from random import randint
 h5_imgs_fn = '/Users/martin.majer/PycharmProjects/PR4/data/sun_sample.hdf5'
 h5_fts_fn = h5_imgs_fn + '.features.hdf5'
 # jaky limit?
-n = 100000
+n = 1000000
 
 app = Flask(__name__)
 
