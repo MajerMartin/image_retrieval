@@ -124,19 +124,25 @@ def results():
     # list of images to be passed to render_template
     filenames = []
 
-    ####################################################################################
-    # DODELAT AZ BUDE FUNGOVAT HLEDANI PRO UPLOADOVANY OBRAZEK
-    if search_url:
-        msg = 'Searching using URL (%s)' % search_url
-        # pouzit check_allowed
-        urllib.urlretrieve(search_url, path)
-    ####################################################################################
+    if search_url or search_file:
+        if search_url:
+            if check_allowed(search_url):
+                msg = 'Searching using URL (%s)' % search_url
+                # temporarily save image in full resolution
+                urllib.urlretrieve(search_url, path)
+            else:
+                msg = 'Please provide URL containing image.'
+                return render_template('results.html', msg=msg, filenames=filenames)
 
-    elif search_file and check_allowed(search_file.filename):
-        msg = 'Searching using file (filename: %s)' % search_file.filename
+        else:
+            if check_allowed(search_file.filename):
+                msg = 'Searching using file (filename: %s)' % search_file.filename
+                # temporarily save image in full resolution
+                search_file.save(path)
+            else:
+                msg = 'Please provide valid image file.'
+                return render_template('results.html', msg=msg, filenames=filenames)
 
-        # temporarily save image in full resolution
-        search_file.save(path)
 
         # open image using opencv, resize it and crop it (BGR, float32)
         img = cv2.imread(path)
@@ -160,7 +166,7 @@ def results():
 
         # zavolat add_images()
         print 'len(kdt.features) before\t|\t', len(kdt.features)
-        kdt.add_images([img_cropped], [img_feat])
+        kdt.add_images([img_cropped], [score])
         print 'len(kdt.features) after\t|\t', len(kdt.features)
 
         # zavolat save()
@@ -177,11 +183,11 @@ def results():
             filenames.append(str(index) + '.jpg')
 
         print filenames
-
     else:
         msg = 'Please provide URL or file.'
 
     return render_template('results.html', msg=msg, filenames=filenames)
+
 
 @app.route('/thumbs/<filename>')
 def send_file(filename):
