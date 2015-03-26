@@ -8,6 +8,10 @@ import numpy as np
 # initialize flask server
 app = Flask(__name__)
 
+# image dimensions for features calculation
+height = 227.
+width = 227.
+
 # switch between deployment (True) and local testing mode (False)
 caffe_toggle = False
 
@@ -131,24 +135,32 @@ def results():
     elif search_file and check_allowed(search_file.filename):
         msg = 'Searching using file (filename: %s)' % search_file.filename
 
-        # docasne ulozit obrazek na disk
+        # temporarily save image in full resolution
         search_file.save(path)
 
-        # otevrit obrazek
+        # open image using opencv, resize it and crop it (BGR, float32)
         img = cv2.imread(path)
-        print 'img.shape\t|\t', img.shape
-        # ukladat i original?
-        # obratit barvy
-        # oriznout na ctverec pro zachovani pomeru stran
+        dim = keep_ratio(img.shape, height, width)
+        img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_CUBIC)
+        img_cropped = crop(img_resized, height, width)
+        img_cropped = img_cropped.astype(np.float32)
 
-        # spocitat features - zatim random
-        with h5py.File(h5_fts_fn, 'r') as fr_features:
-            img_feat = fr_features['score'][randint(0, 9999)]
-            print 'img_feat.shape\t|\t', img_feat.shape
+        # calculate features (or choose random for local testing)
+        if caffe_toggle:
+            score = net.predict([img_cropped]).flatten()
+        else:
+            with h5py.File(h5_fts_fn, 'r') as fr_features:
+                score = fr_features['score'][randint(0, 9999)]
+
+        # convert image to RGB uint8
+
+
+
+
 
         # zavolat add_images()
         print 'len(kdt.features) before\t|\t', len(kdt.features)
-        kdt.add_images([img], [img_feat])
+        kdt.add_images([img_cropped], [img_feat])
         print 'len(kdt.features) after\t|\t', len(kdt.features)
 
         # zavolat save()
@@ -181,5 +193,5 @@ def send_file(filename):
     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'thumbs'), filename)
 
 if __name__ == '__main__':
-    kdt = kdtree.ImageSearchKDTree(app.config['UPLOAD_FOLDER'], n, (150,150,3))
+    kdt = kdtree.ImageSearchKDTree(app.config['UPLOAD_FOLDER'], 1000000000, (150,150,3))
     app.run(port=8080, debug=True)
