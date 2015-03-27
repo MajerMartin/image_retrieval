@@ -5,6 +5,7 @@ import h5py
 import itertools
 import os.path
 import numpy as np
+from scipy.misc import imsave
 from sklearn.neighbors import KDTree
 
 
@@ -57,7 +58,7 @@ class ImageSearchKDTree(object):
             img_resized = img_resized.astype(np.uint8)
             index = str(end - len(images) + i)
             print '\rAdding image #%s' % index,
-            cv2.imwrite(os.path.join(self.storage_dir, self.thumbs, index) + '.jpg', img_resized)
+            imsave(os.path.join(self.storage_dir, self.thumbs, index) + '.jpg', img_resized)
 
         print '\nCalculating KDTree...'
         self.tree = KDTree(self.features, metric='euclidean')
