@@ -13,7 +13,7 @@ height = 227.
 width = 227.
 
 # switch between deployment (True) and local testing mode (False)
-caffe_toggle = False
+caffe_toggle = True
 
 if caffe_toggle:
     import caffe
