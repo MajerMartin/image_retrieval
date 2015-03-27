@@ -174,7 +174,7 @@ def results():
         indexes, distances = kdt.find_k_nearest_by_index(last, k+1)
 
         # check for duplicate image
-        if (distances[1] - distances[0]) < 0.001:
+        if (distances[1] - distances[0]) < 0.01:
             # remove duplicate image from database
             duplicate = os.path.join(app.config['UPLOAD_FOLDER'], 'thumbs', str(last) + '.jpg')
             os.remove(duplicate)
