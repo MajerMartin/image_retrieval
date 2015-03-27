@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, send_from_directory
-from ..img_search import kdtree
+from img_search import kdtree
 import os.path
 import cv2
 import urllib
