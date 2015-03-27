@@ -4,7 +4,6 @@ import numpy as np
 import cv2
 import h5py
 import os.path
-from scipy.misc import imsave
 from scipy.spatial.distance import squareform
 
 
@@ -59,7 +58,7 @@ class ImageSearchDistanceMatrix(object):
             img_resized = img_resized.astype(np.uint8)
             index = str(end - len(images) + i)
             print '\rAdding image #%s' % index,
-            imsave(os.path.join(self.storage_dir, self.thumbs, index) + '.jpg', img_resized)
+            cv2.imwrite(os.path.join(self.storage_dir, self.thumbs, index) + '.jpg', img_resized)
 
         # initialize new distance matrix
         if self.distance_matrix is None:
