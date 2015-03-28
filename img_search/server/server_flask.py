@@ -1,6 +1,9 @@
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
 from flask import Flask, request, render_template, send_from_directory
 from img_search import kdtree
-import os.path
 import cv2
 import urllib
 import numpy as np
