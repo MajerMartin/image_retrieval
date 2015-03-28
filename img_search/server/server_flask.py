@@ -215,4 +215,4 @@ def send_file(filename):
 
 if __name__ == '__main__':
     kdt = kdtree.ImageSearchKDTree(app.config['UPLOAD_FOLDER'], 1000000000, (150,150,3))
-    app.run(port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)
