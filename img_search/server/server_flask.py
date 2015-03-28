@@ -185,6 +185,7 @@ def results():
             os.remove(duplicate)
 
             # remove features of duplicate image
+            print 'Removing image #%s' % last
             del kdt.features[-1]
 
             # do not print duplicate image (recently added)
