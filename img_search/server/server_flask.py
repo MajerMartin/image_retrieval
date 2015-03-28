@@ -159,7 +159,9 @@ def results():
 
         # calculate features (or choose random for local testing)
         if caffe_toggle:
+            print 'Calculating features...'
             score = net.predict([img_cropped]).flatten()
+            print 'Calculated.'
         else:
             with h5py.File(h5_fts_fn, 'r') as fr_features:
                 score = fr_features['score'][randint(0, 9999)]
@@ -185,9 +187,13 @@ def results():
             # remove features of duplicate image
             del kdt.features[-1]
 
-            # do not print duplicate image
-            indexes = indexes[1:]
-            distances = distances[1:]
+            # do not print duplicate image (recently added)
+            if indexes[0] > indexes[1]:
+                indexes = indexes[1:]
+                distances = distances[1:]
+            else:
+                del indexes[1]
+                del distances[1]
         else:
             indexes = indexes[:k]
             distances = distances[:k]
@@ -215,5 +221,10 @@ def send_file(filename):
 
 if __name__ == '__main__':
     kdt = kdtree.ImageSearchKDTree(app.config['UPLOAD_FOLDER'], 1000000000, (150,150,3))
-    host='127.0.0.1'
-    app.run(host='147.228.240.71', port=8080, debug=True)
+
+    if caffe_toggle:
+        host = '147.228.240.71'
+    else:
+        host='127.0.0.1'
+
+    app.run(host=host, port=8080, debug=True)
