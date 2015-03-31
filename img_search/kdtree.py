@@ -89,6 +89,19 @@ class ImageSearchKDTree(object):
 
         return images
 
+    def remove_last_image(self):
+        '''
+        Remove last image from features and database.
+        :return: nothing
+        '''
+        last = len(self.features) - 1
+
+        image = os.path.join(self.storage_dir, 'thumbs', str(last) + '.jpg')
+        os.remove(image)
+
+        print 'Removing image #%s' % last
+        del self.features[-1]
+
     def save(self):
         '''
         Save object variables to HDF5.

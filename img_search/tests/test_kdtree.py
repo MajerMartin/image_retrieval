@@ -82,6 +82,20 @@ class KDTreeTestClass(unittest.TestCase):
         self.assertEqual(len(indexes), 3)
         self.assertEqual(len(distances), 3)
 
+    def test_remove_last_image(self):
+        kdt = img_search.kdtree.ImageSearchKDTree(self.storage_dir)
+
+        kdt.add_images(self.imgs[:6, :, ::-1], self.features[:6, :])
+
+        last = len(kdt.features) - 1
+        self.assertEqual(len(kdt.features), 6)
+        assert os.path.exists(os.path.join(self.storage_dir, 'thumbs', str(last) + '.jpg')) == 1
+
+        kdt.remove_last_image()
+
+        self.assertEqual(len(kdt.features), 5)
+        assert os.path.exists(os.path.join(self.storage_dir, 'thumbs', str(last) + '.jpg')) == 0
+
     def test_kdtree_load(self):
         kdt = img_search.kdtree.ImageSearchKDTree(self.storage_dir)
 
