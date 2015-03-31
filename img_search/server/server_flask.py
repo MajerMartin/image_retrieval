@@ -16,7 +16,7 @@ height = 227.
 width = 227.
 
 # switch between deployment (True) and local testing mode (False)
-caffe_toggle = True
+caffe_toggle = False
 
 if caffe_toggle:
     import caffe
@@ -61,7 +61,7 @@ def keep_ratio(shape, height, width):
     :param width: width the image will be resized to
     :return: dimensions the image will be resized to
     '''
-    #height <= width
+    # height <= width
     if shape[0] <= shape[1]:
         ratio = height / shape[0]
         width = shape[1] * ratio
@@ -69,7 +69,7 @@ def keep_ratio(shape, height, width):
         ratio = width / shape[1]
         height = shape[0] * ratio
 
-    #opencv dimension format
+    # opencv dimension format
     dim = int(width), int(height)
 
     return dim
@@ -128,83 +128,84 @@ def results():
     filenames = []
     distances = []
 
-    if search_url or search_file:
-        if search_url:
-            if check_allowed(search_url):
-                msg = 'Searching using URL (%s)' % search_url
-                # temporarily save image in full resolution
-                urllib.urlretrieve(search_url, path)
-            else:
-                msg = 'Please provide URL containing image.'
-                return render_template('results.html', msg=msg, filenames=filenames)
-
-        else:
-            if check_allowed(search_file.filename):
-                msg = 'Searching using file (filename: %s)' % search_file.filename
-                # temporarily save image in full resolution
-                search_file.save(path)
-            else:
-                msg = 'Please provide valid image file.'
-                return render_template('results.html', msg=msg, filenames=filenames)
-
-        # open image using opencv, resize it and crop it (BGR, float32)
-        img = cv2.imread(path)
-        dim = keep_ratio(img.shape, height, width)
-        img_resized = cv2.resize(img, dim, interpolation = cv2.INTER_CUBIC)
-        img_cropped = crop(img_resized, height, width)
-        img_cropped = img_cropped.astype(np.float32)
-
-        # delete temporary image
-        os.remove(path)
-
-        # calculate features (or choose random for local testing)
-        if caffe_toggle:
-            print 'Calculating features...'
-            score = net.predict([img_cropped]).flatten()
-            print 'Calculated.'
-        else:
-            with h5py.File(h5_fts_fn, 'r') as fr_features:
-                score = fr_features['score'][randint(0, 9999)]
-
-        # convert image to RGB uint8
-        img_rgb = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2RGB)
-        img_rgb = img_rgb.astype(np.uint8)
-
-        # add image and save thumbnail
-        kdt.add_images([img_rgb], [score])
-
-        # find k nearest neighbors
-        k = 50
-        last = len(kdt.features) - 1
-        indexes, distances = kdt.find_k_nearest_by_index(last, k+1)
-
-        # check for duplicate image
-        if (distances[1] - distances[0]) < 0.01:
-            # remove duplicate image from database
-            duplicate = os.path.join(app.config['UPLOAD_FOLDER'], 'thumbs', str(last) + '.jpg')
-            os.remove(duplicate)
-
-            # remove features of duplicate image
-            print 'Removing image #%s' % last
-            del kdt.features[-1]
-
-            # do not print duplicate image (recently added)
-            if indexes[0] > indexes[1]:
-                indexes = indexes[1:]
-                distances = distances[1:]
-            else:
-                del indexes[1]
-                del distances[1]
-        else:
-            indexes = indexes[:k]
-            distances = distances[:k]
-            kdt.save()
-
-        # prepare list of files which will be printed
-        for index in indexes:
-            filenames.append(str(index) + '.jpg')
-    else:
+    if not search_url and not search_file:
         msg = 'Please provide URL or file.'
+        return render_template('results.html', msg=msg, data=[])
+
+    if search_url:
+        if check_allowed(search_url):
+            msg = 'Searching using URL (%s)' % search_url
+            # temporarily save image in full resolution
+            urllib.urlretrieve(search_url, path)
+        else:
+            msg = 'Please provide URL containing image.'
+            return render_template('results.html', msg=msg, filenames=filenames)
+
+    else:
+        if check_allowed(search_file.filename):
+            msg = 'Searching using file (filename: %s)' % search_file.filename
+            # temporarily save image in full resolution
+            search_file.save(path)
+        else:
+            msg = 'Please provide valid image file.'
+            return render_template('results.html', msg=msg, filenames=filenames)
+
+    # open image using opencv, resize it and crop it (BGR, float32)
+    img = cv2.imread(path)
+    dim = keep_ratio(img.shape, height, width)
+    img_resized = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
+    img_cropped = crop(img_resized, height, width)
+    img_cropped = img_cropped.astype(np.float32)
+
+    # delete temporary image
+    os.remove(path)
+
+    # calculate features (or choose random for local testing)
+    if caffe_toggle:
+        print 'Calculating features...'
+        score = net.predict([img_cropped]).flatten()
+        print 'Calculated.'
+    else:
+        with h5py.File(h5_fts_fn, 'r') as fr_features:
+            score = fr_features['score'][randint(0, 9999)]
+
+    # convert image to RGB uint8
+    img_rgb = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2RGB)
+    img_rgb = img_rgb.astype(np.uint8)
+
+    # add image and save thumbnail
+    kdt.add_images([img_rgb], [score])
+
+    # find k nearest neighbors
+    k = 50
+    last = len(kdt.features) - 1
+    indexes, distances = kdt.find_k_nearest_by_index(last, k+1)
+
+    # check for duplicate image
+    if (distances[1] - distances[0]) < 0.001:
+        # remove duplicate image from database
+        duplicate = os.path.join(app.config['UPLOAD_FOLDER'], 'thumbs', str(last) + '.jpg')
+        os.remove(duplicate)
+
+        # remove features of duplicate image
+        print 'Removing image #%s' % last
+        del kdt.features[-1]
+
+        # do not print duplicate image (recently added)
+        if indexes[0] > indexes[1]:
+            indexes = indexes[1:]
+            distances = distances[1:]
+        else:
+            del indexes[1]
+            del distances[1]
+    else:
+        indexes = indexes[:k]
+        distances = distances[:k]
+        kdt.save()
+
+    # prepare list of files which will be printed
+    for index in indexes:
+        filenames.append(str(index) + '.jpg')
 
     zipped = zip(filenames, distances)
 
@@ -221,11 +222,11 @@ def send_file(filename):
     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'thumbs'), filename)
 
 if __name__ == '__main__':
-    kdt = kdtree.ImageSearchKDTree(app.config['UPLOAD_FOLDER'], 1000000000, (150,150,3))
+    kdt = kdtree.ImageSearchKDTree(app.config['UPLOAD_FOLDER'], 1000000000, (150, 150, 3))
 
     if caffe_toggle:
         host = '147.228.240.71'
     else:
-        host='127.0.0.1'
+        host = '127.0.0.1'
 
-    app.run(host=host, port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=False)

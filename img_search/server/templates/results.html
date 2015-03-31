@@ -10,7 +10,7 @@
     {% for filename, distance in data %}
         <div>
           <img src="{{ url_for('send_file', filename=filename) }}">
-          {{ distance }}
+          {{ distance|round(6) }}
         </div>
     {% endfor %}
     </div>
