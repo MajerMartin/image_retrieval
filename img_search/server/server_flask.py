@@ -16,7 +16,7 @@ height = 227.
 width = 227.
 
 # switch between deployment (True) and local testing mode (False)
-caffe_toggle = False
+caffe_toggle = True
 
 if caffe_toggle:
     import caffe
@@ -126,7 +126,6 @@ def results():
 
     # list of images to be passed to render_template
     filenames = []
-    distances = []
 
     if not search_url and not search_file:
         msg = 'Please provide URL or file.'
@@ -183,13 +182,8 @@ def results():
 
     # check for duplicate image
     if (distances[1] - distances[0]) < 0.001:
-        # remove duplicate image from database
-        duplicate = os.path.join(app.config['UPLOAD_FOLDER'], 'thumbs', str(last) + '.jpg')
-        os.remove(duplicate)
-
-        # remove features of duplicate image
-        print 'Removing image #%s' % last
-        del kdt.features[-1]
+        # remove duplicate image
+        kdt.remove_last_image()
 
         # do not print duplicate image (recently added)
         if indexes[0] > indexes[1]:
@@ -223,10 +217,4 @@ def send_file(filename):
 
 if __name__ == '__main__':
     kdt = kdtree.ImageSearchKDTree(app.config['UPLOAD_FOLDER'], 1000000000, (150, 150, 3))
-
-    if caffe_toggle:
-        host = '147.228.240.71'
-    else:
-        host = '127.0.0.1'
-
     app.run(host='0.0.0.0', port=8080, debug=False)
