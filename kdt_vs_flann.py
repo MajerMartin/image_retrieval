@@ -26,7 +26,7 @@ kdt = img_search.kdtree.ImageSearchKDTree(storage_dir, n, (150,150,3))
 # <codecell>
 
 index = 3222
-k = 3
+k = 5
 
 # <codecell>
 
