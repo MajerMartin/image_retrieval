@@ -19,7 +19,7 @@ width = 227
 root = os.path.join(os.path.dirname(__file__), '..', 'data', 'sun_full', 'SUN397')
 
 # caffe mode toggle
-gpu = True
+gpu = False
 
 # paths for caffe
 caffe_root = '/storage/plzen1/home/campr/metacentrum/caffe/caffe_cemi_7_dev'
