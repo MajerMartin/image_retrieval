@@ -38,7 +38,13 @@ i = 0
 for path in imgs_paths:
     img = cv2.imread(path)
 
-    if len(img.shape) == 3:
-        i += 1
+    try:
+        if len(img.shape) == 3:
+            i += 1
+    except:
+        print 'Nonetype'
+
+    if i > 20000:
+        break
 
 print 'Pocet obrazku:', i
