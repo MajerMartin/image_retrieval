@@ -36,6 +36,7 @@ if caffe_toggle:
                        # bvlc_reference_caffenet uses pixel values [0, 255], but we don't normalize loaded image to [0.0-1.0], so it is scaled to [0.0, 255.0] already after conversion to float32
                        #raw_scale=255,
                        )
+
     # run net on cpu
     net.set_mode_cpu()
 
