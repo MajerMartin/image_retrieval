@@ -31,11 +31,11 @@ print root
 
 imgs_paths = list_filepaths(root)
 
-print 'Pocet adres:', len(imgs_paths)
-
 i = 0
 
 for path in imgs_paths:
+    print '\r', i, path,
+
     img = cv2.imread(path)
 
     try:
@@ -44,7 +44,8 @@ for path in imgs_paths:
     except:
         print 'Nonetype'
 
-    if i > 20000:
+    if i > 5000:
         break
 
+print 'Pocet adres:', len(imgs_paths)
 print 'Pocet obrazku:', i
