@@ -12,8 +12,8 @@ import cv2
 import time
 
 # image parameters
-height = 227
-width = 227
+height = 227.
+width = 227.
 
 # root directory of images
 root = os.path.join(os.path.dirname(__file__), '..', 'data', 'sun_full', 'SUN397')
@@ -62,9 +62,6 @@ def list_filepaths(root):
 # paths to all image files
 imgs_paths = list_filepaths(root)
 
-
-start_time = time.time()
-
 i = 0
 
 for path in imgs_paths:
@@ -89,7 +86,3 @@ for path in imgs_paths:
 
     if i > 100:
         break
-
-elapsed_time = time.time() - start_time
-
-print elapsed_time
