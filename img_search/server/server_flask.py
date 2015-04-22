@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from flask import Flask, request, render_template, send_from_directory
-from img_search import kdtree
+from img_search import kdtree, images
 import cv2
 import urllib
 import numpy as np
@@ -16,7 +16,7 @@ height = 227.
 width = 227.
 
 # switch between deployment (True) and local testing mode (False)
-caffe_toggle = True
+caffe_toggle = False
 
 if caffe_toggle:
     import caffe
@@ -52,45 +52,6 @@ else:
     app.config['UPLOAD_FOLDER'] = '/Users/martin.majer/PycharmProjects/PR4/data/kdt_server/'
 
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
-
-def keep_ratio(shape, height, width):
-    '''
-    Calculates dimensions for resizing without affecting ratio.
-    :param shape: shape of array of image saved in numpy
-    :param height: height the image will be resized to
-    :param width: width the image will be resized to
-    :return: dimensions the image will be resized to
-    '''
-    # height <= width
-    if shape[0] <= shape[1]:
-        ratio = height / shape[0]
-        width = shape[1] * ratio
-    else:
-        ratio = width / shape[1]
-        height = shape[0] * ratio
-
-    # opencv dimension format
-    dim = int(width), int(height)
-
-    return dim
-
-def crop(img, height, width):
-    '''
-    Crop center of the image.
-    :param img: image to be cropped
-    :param height: height the image will be cropped to
-    :param width: width the image will be cropped to
-    :return: cropped image
-    '''
-    if (img.shape[0] == height) and (img.shape[1] == width):
-        return img
-    elif img.shape[0] == height:
-        middle = img.shape[1] / 2
-        return img[:, (middle - width / 2):(middle + width / 2)]
-    else:
-        middle = img.shape[0] / 2
-        return img[(middle - height / 2):(middle + height / 2), :]
-
 
 def check_allowed(filename):
     '''
@@ -151,9 +112,7 @@ def results():
 
     # open image using opencv, resize it and crop it (BGR, float32)
     img = cv2.imread(path)
-    dim = keep_ratio(img.shape, height, width)
-    img_resized = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)
-    img_cropped = crop(img_resized, height, width)
+    img_cropped = images.resize_crop(img, height, width)
     img_cropped = img_cropped.astype(np.float32)
 
     # delete temporary image
