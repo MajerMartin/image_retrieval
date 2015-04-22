@@ -35,7 +35,7 @@ class ImageSearchKDTree(object):
             self.save()
             print 'Data file created.'
 
-    def add_images(self, images, features):
+    def add_images(self, images, features, build_tree=True):
         '''
         Add images, their features and calculate KDTree.
         :param images: list of images
@@ -60,6 +60,16 @@ class ImageSearchKDTree(object):
             print '\rAdding image #%s' % index,
             imsave(os.path.join(self.storage_dir, self.thumbs, index) + '.jpg', img_resized)
 
+        if build_tree:
+            print '\nCalculating KDTree...'
+            self.tree = KDTree(self.features, metric='euclidean')
+            print 'Calculated.'
+
+    def build_tree(self):
+        '''
+        Build KDTree.
+        :return: nothing
+        '''
         print '\nCalculating KDTree...'
         self.tree = KDTree(self.features, metric='euclidean')
         print 'Calculated.'

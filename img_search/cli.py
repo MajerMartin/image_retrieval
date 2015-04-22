@@ -4,12 +4,11 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from img_search import images
+from img_search import images, kdtree
 import numpy as np
 import caffe
 import h5py
 import cv2
-import time
 
 # image parameters
 height = 227.
@@ -17,6 +16,9 @@ width = 227.
 
 # root directory of images
 root = os.path.join(os.path.dirname(__file__), '..', 'data', 'sun_full', 'SUN397')
+
+# data directory
+storage_dir = os.path.join(root, '..', '..', 'data', 'sun_full_server')
 
 # caffe mode toggle
 gpu = False
@@ -44,23 +46,13 @@ if gpu:
 else:
     net.set_mode_cpu()
 
-def list_filepaths(root):
-    '''
-    Get paths to all images.
-    :param root: root directory
-    :return: list of image paths
-    '''
-    imgs_paths = []
-
-    for path, subdirs, files in os.walk(root):
-        for name in files:
-            if not name.startswith('.'):
-                imgs_paths.append(os.path.join(path, name))
-
-    return imgs_paths
-
 # paths to all image files
+print 'Acquiring image paths...'
 imgs_paths = list_filepaths(root)
+print 'Image paths acquired.'
+
+# initialize KDTree
+kdt = kdtree.ImageSearchKDTree(storage_dir, 1000000000, (150, 150, 3))
 
 i = 0
 
@@ -80,9 +72,37 @@ for path in imgs_paths:
             # calculate features
             score = net.predict([img_cropped]).flatten()
 
+            # save image and its features to hdf5
+
+
+            # convert image to RGB uint8
+            img_rgb = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2RGB)
+            img_rgb = img_rgb.astype(np.uint8)
+
+            # add image and save thumbnail
+            kdt.add_images([img_rgb], [score], build_tree=False)
+
             i += 1
     except:
         print '\nNot an image'
 
-    if i > 100:
+    if i > 30:
         break
+
+kdt.build_tree()
+kdt.save()
+
+def list_filepaths(root):
+    '''
+    Get paths to all images.
+    :param root: root directory
+    :return: list of image paths
+    '''
+    imgs_paths = []
+
+    for path, subdirs, files in os.walk(root):
+        for name in files:
+            if not name.startswith('.'):
+                imgs_paths.append(os.path.join(path, name))
+
+    return imgs_paths
