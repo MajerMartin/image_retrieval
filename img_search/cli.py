@@ -25,11 +25,13 @@ def list_filepaths(root):
 
     return imgs_paths
 
+
 root = os.path.join(os.path.dirname(__file__), '..', 'data', 'sun_full', 'SUN397')
 
 print root
 
 imgs_paths = list_filepaths(root)
+print imgs_paths[:10]
 
 i = 0
 
