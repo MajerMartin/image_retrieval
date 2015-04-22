@@ -5,6 +5,9 @@ import cv2
 import numpy as np
 import h5py
 
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from img_search import images
 
 def list_filepaths(root):
