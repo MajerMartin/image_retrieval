@@ -46,6 +46,21 @@ if gpu:
 else:
     net.set_mode_cpu()
 
+def list_filepaths(root):
+    '''
+    Get paths to all images.
+    :param root: root directory
+    :return: list of image paths
+    '''
+    imgs_paths = []
+
+    for path, subdirs, files in os.walk(root):
+        for name in files:
+            if not name.startswith('.'):
+                imgs_paths.append(os.path.join(path, name))
+
+    return imgs_paths
+
 # paths to all image files
 print 'Acquiring image paths...'
 imgs_paths = list_filepaths(root)
@@ -63,7 +78,7 @@ for path in imgs_paths:
         # open image using opencv
         img = cv2.imread(path)
 
-        # channels
+        # color channels
         if len(img.shape) == 3:
             # resize image and crop it (BGR, float32)
             img_cropped = images.resize_crop(img, height, width)
@@ -91,18 +106,3 @@ for path in imgs_paths:
 
 kdt.build_tree()
 kdt.save()
-
-def list_filepaths(root):
-    '''
-    Get paths to all images.
-    :param root: root directory
-    :return: list of image paths
-    '''
-    imgs_paths = []
-
-    for path, subdirs, files in os.walk(root):
-        for name in files:
-            if not name.startswith('.'):
-                imgs_paths.append(os.path.join(path, name))
-
-    return imgs_paths
