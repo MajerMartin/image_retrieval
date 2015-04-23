@@ -136,7 +136,7 @@ def results():
     kdt.add_images([img_rgb], [score])
 
     # find k nearest neighbors
-    k = 50
+    k = 49
     last = len(kdt.features) - 1
     indexes, distances = kdt.find_k_nearest_by_index(last, k+1)
 
