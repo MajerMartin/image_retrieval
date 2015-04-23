@@ -1,16 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
+
   <head>
-    <meta charset="UTF-8">
-    <title>Image search demo</title>
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
-    <link rel="stylesheet" href="static/style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <link href="../static/css/style.css" media="all" rel="stylesheet" type="text/css" />
+
+  	{% block head %}{% endblock %}
+
+    <title>{% block headtitle %}{% endblock %} - ImageSearch</title>
+
   </head>
+
+
   <body>
-    <header>
-        <h1>Image search demo</h1>
-    </header>
-    <h2>{% block title %}{% endblock %}</h2>
-    {% block body %}{% endblock %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">ImageSearch</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            {% block nav %}{% endblock %}
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    {% block jumbotron %}{% endblock %}
+
+    <div class="container">
+        <h2>{% block title %}{% endblock %}</h2>
+        {% block body %}{% endblock %}
+    </div>
+
   </body>
 </html>

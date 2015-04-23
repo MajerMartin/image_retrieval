@@ -66,9 +66,6 @@ print 'Acquiring image paths...'
 imgs_paths = list_filepaths(root)
 print 'Image paths acquired.'
 
-# initialize KDTree
-kdt = kdtree.ImageSearchKDTree(storage_dir, 1000000000, (150, 150, 3))
-
 i = 0
 
 for path in imgs_paths:
@@ -89,13 +86,13 @@ for path in imgs_paths:
 
             # save image and its features to hdf5
 
+            #############
+            # ULOZIT OBRAZKY A FEATURES DO DVOU DYNAMICKYCH HDF5
+            #                       X
+            # POSTUPNE PRIDAVAT DO OBJEKTU KDT A NAKONEC VYTVORIT STROM
+            #                       ?
+            ############
 
-            # convert image to RGB uint8
-            img_rgb = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2RGB)
-            img_rgb = img_rgb.astype(np.uint8)
-
-            # add image and save thumbnail
-            kdt.add_images([img_rgb], [score], build_tree=False)
 
             i += 1
     except:
@@ -103,6 +100,17 @@ for path in imgs_paths:
 
     if i > 30:
         break
+
+
+# initialize KDTree
+kdt = kdtree.ImageSearchKDTree(storage_dir, 1000000000, (150, 150, 3))
+
+# convert image to RGB uint8
+img_rgb = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2RGB)
+img_rgb = img_rgb.astype(np.uint8)
+
+# add image and save thumbnail
+kdt.add_images([img_rgb], [score], build_tree=False)
 
 kdt.build_tree()
 kdt.save()

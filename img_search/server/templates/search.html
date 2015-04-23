@@ -1,24 +1,49 @@
 {% extends "layout.html" %}
 
+{% block head %}
+    <link href="../static/css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+  	<script src="../static/js/fileinput.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block headtitle %}
+    Home
+{% endblock %}
+
+{% block nav %}
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+    </ul>
+{% endblock %}
+
+{% block jumbotron %}
+    <div class="jumbotron">
+      <div class="container">
+        <h1>ImageSearch</h1>
+        <p>ImageSearch is a system for semantic based image indexing &amp; retrieval. ImageSearch was built using Python, FLANN library, Caffe deep learning framework and Flask web framework.
+      </div>
+    </div>
+{% endblock %}
+
 {% block title %}
-    Image search
+    Find Similar Images
 {% endblock %}
 
 {% block body %}
-<form action="results" method="post" enctype="multipart/form-data">
-    <fieldset>
-        <label>
-            <span>File:</span>
-            <input type="file" name="search_file">
-        </label>
-        <label>
-            <span>URL:</span>
-            <input type="text" name="search_url">
-        </label>
-        <label>
-            <span>&nbsp;</span>
-            <input type="submit">
-        </label>
-    </fieldset>
-</form>
+    <p>Upload an image file from your computer or via URL. Supported formats: .jpg, .jpeg, .png, .gif</p>
+
+    <form action="results" method="post" enctype="multipart/form-data">
+	    <div class="form-group">
+		    <label for="file" >File</label>
+		    <input type="file" class="file" data-show-preview="false" name="search_file">
+		</div>
+
+        <label for="url">URL</label>
+		<div class="input-group">
+		    <input type="text" class="form-control" id="search_url" name="search_url">
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </span>
+		</div>
+	</form>
 {% endblock %}

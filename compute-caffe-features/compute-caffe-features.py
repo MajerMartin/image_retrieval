@@ -120,7 +120,7 @@ with h5py.File(h5_src_fn,'r') as fr, h5py.File(h5_dst_fn, 'w') as fw:
         img = np.array(fr['imgs'][i][:,:,::-1]) # are channels swapped in source h5 file?
         img = img.astype(np.float32) * 255 # this caffe model expects pixel values from 0 to 255
 
-        assert img.shape == (227, 227, 3), 'sldjfklksdjf'
+        assert img.shape == (227, 227, 3)
         
         # predict
         score = net.predict([img]).flatten()  # predict() takes any number of images, and formats them for the Caffe net automatically

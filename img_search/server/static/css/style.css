@@ -1,0 +1,23 @@
+body {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+h1 {
+    padding-bottom: 10px;
+}
+
+#results {
+	text-align: center;
+}
+
+#results div {
+	float: left;
+	margin: 5px;
+}
+
+#results img {
+	width: 160px;
+    height: 160px;
+    margin-bottom: 1px;
+}

@@ -1,17 +1,37 @@
 {% extends "layout.html" %}
 
+{% block head %}
+{% endblock %}
+
+{% block headtitle %}
+    Results
+{% endblock %}
+
+{% block nav %}
+    <ul class="nav navbar-nav">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+    </ul>
+{% endblock %}
+
+{% block jumbotron %}
+{% endblock %}
+
 {% block title %}
-    Image search results
+    Results
 {% endblock %}
 
 {% block body %}
     {{ msg }}
+
     <div id="results">
-    {% for filename, distance in data %}
-        <div>
-          <img src="{{ url_for('send_file', filename=filename) }}">
-          {{ distance|round(6) }}
+	    <div class="span12">
+		    {% for filename, distance in data %}
+            <div>
+			    <img src="{{ url_for('send_file', filename=filename) }}" class="img-thumbnail"><br/>
+				<span class="center">{{ distance|round(4) }}</span>
+			</div>
+            {% endfor %}
         </div>
-    {% endfor %}
     </div>
 {% endblock %}
