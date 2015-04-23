@@ -14,7 +14,7 @@ height = 227.
 width = 227.
 
 # root directory of images
-root = os.path.join(os.path.dirname(__file__), '..', 'data', 'sun_full', 'SUN397')
+root = '/storage/plzen1/home/mmajer/pr4/data/sun_full/SUN397'
 
 # data directory
 storage_dir = os.path.join(root, '..', '..', 'data', 'sun_full_sample')
@@ -69,7 +69,7 @@ print 'Image paths acquired.'
 sample = sorted(imgs_paths)  #copy
 np.random.seed(50)
 np.random.shuffle(sample) #in-place
-n = 5000
+n = 1000
 sample = sample[:n]
 
 # initialize KDTree
