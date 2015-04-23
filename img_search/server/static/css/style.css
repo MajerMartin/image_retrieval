@@ -7,8 +7,13 @@ h1 {
     padding-bottom: 10px;
 }
 
+h2 {
+    padding-bottom: 3px;
+}
+
 #results {
 	text-align: center;
+	margin: 0 auto;
 }
 
 #results div {
@@ -17,7 +22,11 @@ h1 {
 }
 
 #results img {
-	width: 160px;
-    height: 160px;
+	width: 150px;
+    height: 150px;
     margin-bottom: 1px;
+}
+
+form {
+    padding-top: 3px;
 }

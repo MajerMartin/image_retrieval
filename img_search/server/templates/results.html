@@ -9,8 +9,9 @@
 
 {% block nav %}
     <ul class="nav navbar-nav">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
+        <li><a href="/">Home</a></li>
+        <li class="active"><a href="#">Results</a></li>
+        <li><a href="/about">About</a></li>
     </ul>
 {% endblock %}
 
@@ -22,14 +23,14 @@
 {% endblock %}
 
 {% block body %}
-    {{ msg }}
+    <p>{{ msg }}</p>
 
     <div id="results">
 	    <div class="span12">
 		    {% for filename, distance in data %}
             <div>
 			    <img src="{{ url_for('send_file', filename=filename) }}" class="img-thumbnail"><br/>
-				<span class="center">{{ distance|round(4) }}</span>
+				<span class="center">{{ distance|round(6) }}</span>
 			</div>
             {% endfor %}
         </div>

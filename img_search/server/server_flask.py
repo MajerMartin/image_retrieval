@@ -16,7 +16,7 @@ height = 227.
 width = 227.
 
 # switch between deployment (True) and local testing mode (False)
-caffe_toggle = False
+caffe_toggle = True
 
 if caffe_toggle:
     import caffe
@@ -95,7 +95,7 @@ def results():
 
     if search_url:
         if check_allowed(search_url):
-            msg = 'Searching using URL (%s)' % search_url
+            msg = 'Searching using URL (filename: %s).' % search_url.split('/')[-1]
             # temporarily save image in full resolution
             urllib.urlretrieve(search_url, path)
         else:
@@ -104,7 +104,7 @@ def results():
 
     else:
         if check_allowed(search_file.filename):
-            msg = 'Searching using file (filename: %s)' % search_file.filename
+            msg = 'Searching using file (filename: %s).' % search_file.filename
             # temporarily save image in full resolution
             search_file.save(path)
         else:
@@ -174,6 +174,14 @@ def send_file(filename):
     :return: image
     '''
     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'thumbs'), filename)
+
+@app.route('/about')
+def about():
+    '''
+    Page about the project.
+    :return: rendered template from html file
+    '''
+    return render_template('about.html')
 
 if __name__ == '__main__':
     kdt = kdtree.ImageSearchKDTree(app.config['UPLOAD_FOLDER'], 1000000000, (150, 150, 3))
