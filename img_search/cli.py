@@ -75,7 +75,7 @@ if debug:
     sample = sorted(imgs_paths)  #copy
     np.random.seed(50)
     np.random.shuffle(sample) #in-place
-    n = 10000
+    n = 5000
     imgs_paths = sample[:n]
 
 # initialize KDTree
