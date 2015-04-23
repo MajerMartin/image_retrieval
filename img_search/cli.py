@@ -1,4 +1,3 @@
-
 __author__ = 'martin.majer'
 
 import os
