@@ -61,9 +61,7 @@ class ImageSearchKDTree(object):
             imsave(os.path.join(self.storage_dir, self.thumbs, index) + '.jpg', img_resized)
 
         if build_tree:
-            print '\nCalculating KDTree...'
-            self.tree = KDTree(self.features, metric='euclidean')
-            print 'Calculated.'
+            self.build_tree()
 
     def build_tree(self):
         '''

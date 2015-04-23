@@ -7,7 +7,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from img_search import images, kdtree
 import numpy as np
 import caffe
-import h5py
 import cv2
 
 # image parameters
@@ -18,7 +17,7 @@ width = 227.
 root = os.path.join(os.path.dirname(__file__), '..', 'data', 'sun_full', 'SUN397')
 
 # data directory
-storage_dir = os.path.join(root, '..', '..', 'data', 'sun_full_server')
+storage_dir = os.path.join(root, '..', '..', 'data', 'sun_full_sample')
 
 # caffe mode toggle
 gpu = False
@@ -66,9 +65,19 @@ print 'Acquiring image paths...'
 imgs_paths = list_filepaths(root)
 print 'Image paths acquired.'
 
+# sample for testing
+sample = sorted(imgs_paths)  #copy
+np.random.seed(50)
+np.random.shuffle(sample) #in-place
+n = 5000
+sample = sample[:n]
+
+# initialize KDTree
+kdt = kdtree.ImageSearchKDTree(storage_dir, 1000000000, (150, 150, 3))
+
 i = 0
 
-for path in imgs_paths:
+for path in sample:
     print '\r', i, path,
 
     try:
@@ -84,33 +93,22 @@ for path in imgs_paths:
             # calculate features
             score = net.predict([img_cropped]).flatten()
 
-            # save image and its features to hdf5
+            # convert image to RGB uint8
+            img_rgb = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2RGB)
+            img_rgb = img_rgb.astype(np.uint8)
 
-            #############
-            # ULOZIT OBRAZKY A FEATURES DO DVOU DYNAMICKYCH HDF5
-            #                       X
-            # POSTUPNE PRIDAVAT DO OBJEKTU KDT A NAKONEC VYTVORIT STROM
-            #                       ?
-            ############
-
+            # add image and save thumbnail
+            kdt.add_images([img_rgb], [score], build_tree=False)
 
             i += 1
     except:
         print '\nNot an image'
 
-    if i > 30:
-        break
-
-
-# initialize KDTree
-kdt = kdtree.ImageSearchKDTree(storage_dir, 1000000000, (150, 150, 3))
-
-# convert image to RGB uint8
-img_rgb = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2RGB)
-img_rgb = img_rgb.astype(np.uint8)
-
-# add image and save thumbnail
-kdt.add_images([img_rgb], [score], build_tree=False)
-
+# build KDTree
 kdt.build_tree()
 kdt.save()
+
+#smazat
+print '\nSample size:', n
+print 'Image count:', i
+print 'Images added:', len(kdt.features)
