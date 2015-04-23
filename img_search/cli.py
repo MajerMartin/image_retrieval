@@ -9,7 +9,7 @@ import numpy as np
 import caffe
 import cv2
 
-debug = True
+debug = False
 
 # image parameters
 height = 227.
@@ -25,7 +25,7 @@ else:
     storage_dir = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
 
 # caffe mode toggle
-gpu = False
+gpu = True
 
 # paths for caffe
 caffe_root = '/storage/plzen1/home/campr/metacentrum/caffe/caffe_cemi_7_dev'
