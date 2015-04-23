@@ -9,6 +9,8 @@ import numpy as np
 import caffe
 import cv2
 
+debug = True
+
 # image parameters
 height = 227.
 width = 227.
@@ -17,7 +19,10 @@ width = 227.
 root = '/storage/plzen1/home/mmajer/pr4/data/sun_full/SUN397'
 
 # data directory
-storage_dir = os.path.join(root, '..', '..', 'data', 'sun_full_sample')
+if debug:
+    storage_dir = os.path.join(root, '..', '..', 'sun_full_sample')
+else:
+    storage_dir = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
 
 # caffe mode toggle
 gpu = False
@@ -66,18 +71,19 @@ imgs_paths = list_filepaths(root)
 print 'Image paths acquired.'
 
 # sample for testing
-sample = sorted(imgs_paths)  #copy
-np.random.seed(50)
-np.random.shuffle(sample) #in-place
-n = 1000
-sample = sample[:n]
+if debug:
+    sample = sorted(imgs_paths)  #copy
+    np.random.seed(50)
+    np.random.shuffle(sample) #in-place
+    n = 500
+    imgs_paths = sample[:n]
 
 # initialize KDTree
 kdt = kdtree.ImageSearchKDTree(storage_dir, 1000000000, (150, 150, 3))
 
 i = 0
 
-for path in sample:
+for path in imgs_paths:
     print '\r', i, path,
 
     try:
@@ -108,7 +114,6 @@ for path in sample:
 kdt.build_tree()
 kdt.save()
 
-#smazat
 print '\nSample size:', n
 print 'Image count:', i
 print 'Images added:', len(kdt.features)
