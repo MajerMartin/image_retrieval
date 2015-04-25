@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from flask import Flask, request, render_template, send_from_directory
-from img_search import kdtree, images
+from img_search import kdtree_flann, images
 import cv2
 import urllib
 import numpy as np
@@ -16,7 +16,7 @@ height = 227.
 width = 227.
 
 # switch between deployment (True) and local testing mode (False)
-caffe_toggle = False
+caffe_toggle = True
 
 if caffe_toggle:
     import caffe
@@ -41,7 +41,8 @@ if caffe_toggle:
     net.set_mode_cpu()
 
     # path to data folder
-    app.config['UPLOAD_FOLDER'] = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
+    #app.config['UPLOAD_FOLDER'] = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
+    app.config['UPLOAD_FOLDER'] = '/storage/plzen1/home/mmajer/pr4/data/sun_full_sample/'
 else:
     import h5py
     from random import randint
@@ -50,7 +51,7 @@ else:
     h5_fts_fn = '/Users/martin.majer/PycharmProjects/PR4/data/sun_sample.hdf5.features.hdf5'
 
     # path to data folder
-    app.config['UPLOAD_FOLDER'] = '/Users/martin.majer/PycharmProjects/PR4/data/kdt_server/'
+    app.config['UPLOAD_FOLDER'] = '/Users/martin.majer/PycharmProjects/PR4/data/kdt_flann_server/'
 
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -184,5 +185,5 @@ def about():
     return render_template('about.html')
 
 if __name__ == '__main__':
-    kdt = kdtree.ImageSearchKDTree(app.config['UPLOAD_FOLDER'], 1000000000, (150, 150, 3))
+    kdt = kdtree_flann.ImageSearchKDTreeFlann(app.config['UPLOAD_FOLDER'], 1000000000, (150, 150, 3))
     app.run(host='0.0.0.0', port=8080, debug=False)
