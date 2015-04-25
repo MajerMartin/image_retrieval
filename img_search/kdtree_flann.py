@@ -116,7 +116,7 @@ class ImageSearchKDTreeFlann(object):
 
     def save(self, save_tree=True):
         '''
-        Save object variables to HDF5.
+        Save object variables to HDF5 and save KDTree.
         :return: nothing
         '''
         with h5py.File(self.data_path, 'w') as fw:
@@ -135,7 +135,7 @@ class ImageSearchKDTreeFlann(object):
 
     def load(self):
         '''
-        Load variables from HDF5 file and rebuild KDTree.
+        Load variables from HDF5 file and load KDTree.
         :return: nothing
         '''
         with h5py.File(self.data_path, 'r') as fr:

@@ -10,17 +10,17 @@ import cv2
 
 import img_search
 
-#%matplotlib inline
+%matplotlib inline
 
 # <codecell>
 
-#h5_imgs_fn = '/Users/martin.majer/PycharmProjects/PR4/data/sun_sample.hdf5'
-#h5_fts_fn = h5_imgs_fn + '.features.hdf5'
-#storage_dir = '/Users/martin.majer/PycharmProjects/PR4/data/kdt_server/'
-
-h5_imgs_fn = '/storage/plzen1/home/mmajer/pr4/data/sun_sample.hdf5'
+h5_imgs_fn = '/Users/martin.majer/PycharmProjects/PR4/data/sun_sample.hdf5'
 h5_fts_fn = h5_imgs_fn + '.features.hdf5'
-storage_dir = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
+storage_dir = '/Users/martin.majer/PycharmProjects/PR4/data/kdt_server/'
+
+#h5_imgs_fn = '/storage/plzen1/home/mmajer/pr4/data/sun_sample.hdf5'
+#h5_fts_fn = h5_imgs_fn + '.features.hdf5'
+#storage_dir = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
 
 n = 10000
 
@@ -67,7 +67,7 @@ kdt.save()
 
 # <codecell>
 
-index = 3222
+index = 765
 k = 5
 neighbors = kdt.find_k_nearest_by_index(index, k)
 print 'neighbors:', neighbors
@@ -76,9 +76,9 @@ print 'neighbors:', neighbors
 
 images = kdt.get_images(neighbors)
 
-#for img in images:
-#    plt.figure()
-#    plt.imshow(img[:,:,::-1])
-#    plt.colorbar()
-#    plt.show()
+for img in images:
+    plt.figure()
+    plt.imshow(img[:,:,::-1])
+    plt.colorbar()
+    plt.show()
 

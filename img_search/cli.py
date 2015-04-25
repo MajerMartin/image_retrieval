@@ -4,12 +4,13 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from img_search import images, kdtree
+from img_search import images, kdtree_flann
 import numpy as np
 import caffe
 import cv2
 
-debug = False
+debug = True
+gpu = False
 
 # image parameters
 height = 227.
@@ -23,9 +24,6 @@ if debug:
     storage_dir = os.path.join(root, '..', '..', 'sun_full_sample')
 else:
     storage_dir = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
-
-# caffe mode toggle
-gpu = True
 
 # paths for caffe
 caffe_root = '/storage/plzen1/home/campr/metacentrum/caffe/caffe_cemi_7_dev'
@@ -79,7 +77,7 @@ if debug:
     imgs_paths = sample[:n]
 
 # initialize KDTree
-kdt = kdtree.ImageSearchKDTree(storage_dir, 1000000000, (150, 150, 3))
+kdt = kdtree_flann.ImageSearchKDTreeFlann(storage_dir, 1000000000, (150, 150, 3))
 
 i = 0
 
