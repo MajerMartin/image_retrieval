@@ -16,7 +16,7 @@ height = 227.
 width = 227.
 
 # switch between deployment (True) and local testing mode (False)
-caffe_toggle = True
+caffe_toggle = False
 
 if caffe_toggle:
     import caffe
@@ -41,8 +41,7 @@ if caffe_toggle:
     net.set_mode_cpu()
 
     # path to data folder
-    #app.config['UPLOAD_FOLDER'] = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
-    app.config['UPLOAD_FOLDER'] = '/storage/plzen1/home/mmajer/pr4/data/sun_full_sample/'
+    app.config['UPLOAD_FOLDER'] = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
 else:
     import h5py
     from random import randint
@@ -142,7 +141,7 @@ def results():
     indexes, distances = kdt.find_k_nearest_by_index(last, k+1)
 
     # check for duplicate image
-    if (distances[1] - distances[0]) < 0.001:
+    if (distances[1] - distances[0]) < 0.000001:
         # remove duplicate image
         kdt.remove_last_image()
 

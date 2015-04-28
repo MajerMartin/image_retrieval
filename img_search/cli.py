@@ -9,7 +9,7 @@ import numpy as np
 import caffe
 import cv2
 
-debug = True
+debug = False
 gpu = False
 
 # image parameters
@@ -82,7 +82,8 @@ kdt = kdtree_flann.ImageSearchKDTreeFlann(storage_dir, 1000000000, (150, 150, 3)
 i = 0
 
 for path in imgs_paths:
-    print '\r', i, path,
+    if i % 50 == 0:
+        print '\r', i, path,
 
     try:
         # open image using opencv
