@@ -61,7 +61,7 @@ class ImageSearchKDTreeFlann(object):
             img_resized = cv2.resize(img, dim, interpolation=cv2.INTER_NEAREST)
             img_resized = img_resized.astype(np.uint8)
             index = str(end - len(images) + i)
-            print '\rAdding image #%s' % index,
+            #print '\rAdding image #%s' % index,
             imsave(os.path.join(self.storage_dir, self.thumbs, index) + '.jpg', img_resized)
 
         if build_tree:
