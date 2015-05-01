@@ -112,7 +112,3 @@ for path in imgs_paths:
 # build KDTree
 kdt.build_tree()
 kdt.save()
-
-print '\nSample size:', n
-print 'Image count:', i
-print 'Images added:', len(kdt.features)

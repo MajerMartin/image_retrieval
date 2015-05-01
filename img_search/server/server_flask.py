@@ -141,7 +141,7 @@ def results():
     indexes, distances = kdt.find_k_nearest_by_index(last, k+1)
 
     # check for duplicate image
-    if (distances[1] - distances[0]) < 0.0000001:
+    if (distances[1] - distances[0]) < 1e-30:
         # remove duplicate image
         kdt.remove_last_image()
 
