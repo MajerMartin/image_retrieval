@@ -30,3 +30,8 @@ h2 {
 form {
     padding-top: 3px;
 }
+
+label.vert {
+    display: block;
+    padding-top: 15px;
+}

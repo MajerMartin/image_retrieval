@@ -77,6 +77,7 @@ def results():
     # get data from form
     search_file = request.files['search_file']
     search_url = request.form['search_url']
+    k = int(request.form['count'])
 
     # path to temporary image file
     filename = 'img'
@@ -128,7 +129,6 @@ def results():
         kdt.add_images([img_rgb], [score])
 
         # find k nearest neighbors
-        k = 49
         last = len(kdt.features) - 1
         indexes, distances = kdt.find_k_nearest_by_index(last, k+1)
 
