@@ -14,9 +14,8 @@ storage = '/storage/plzen1/home/mmajer/pr4/data/'
 filename = storage + 'sun_img_names.hdf5'
 
 with h5py.File(filename, 'r') as fr:
-    paths = fr['path']
-
-print paths[:5]
+    for i in range(5):
+        print fr['path'][i]
 
 
 
