@@ -13,9 +13,12 @@ print category
 storage = '/storage/plzen1/home/mmajer/pr4/data/'
 filename = storage + 'sun_img_names.hdf5'
 
+count = 0
+
 with h5py.File(filename, 'r') as fr:
-    for i in range(5):
-        print fr['path'][i]
+    for i in indexes:
+        str = fr['path'][i]
+        if category in str:
+            count += 1
 
-
-
+print count
