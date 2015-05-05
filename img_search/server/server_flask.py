@@ -102,7 +102,7 @@ def results():
         # open image using opencv, resize it and crop it (BGR, float32)
         img = cv2.imread(path)
         if img is None:
-            msg = 'CHYBA!' #todo DODELAT
+            msg = 'We apologize for the inconvenience but the image could not be saved.'
             return render_template('results.html', msg=msg, filenames=filenames)
 
         img_cropped = images.resize_crop(img, height, width)
