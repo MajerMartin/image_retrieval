@@ -8,7 +8,7 @@ import cv2
 
 root = '/storage/plzen1/home/mmajer/pr4/data/sun_full/SUN397'
 storage = '/storage/plzen1/home/mmajer/pr4/data/'
-filename = storage + 'sun_img_names'
+filename = storage + 'sun_img_names.hdf5'
 
 def list_filepaths(root):
     '''
