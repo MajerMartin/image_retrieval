@@ -18,6 +18,7 @@ count = 0
 with h5py.File(filename, 'r') as fr:
     for i in indexes:
         str = fr['path'][i]
+        print str
         if category in str:
             count += 1
 
