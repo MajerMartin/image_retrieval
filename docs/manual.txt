@@ -1,0 +1,12 @@
+SPUŠTĚNÍ PROGRAMU
+
+1) připojení k metacentru: "ssh username@nympha.zcu.cz"
+2) přístup do adresáře: "cd /storage/plzen1/home/mmajer/pr4/img_search/server/
+3) spuštění programu: "python server_flask.py"
+4) přístup přes webový prohlížeč: "http://nympha.zcu.cz:8080"
+
+OVLÁDÁNÍ PROGRAMU
+
+- obrázek lze nahrát přímo z disku (Browse -> Upload) nebo pomocí URL adresy (Submit)
+- počet vyhledaných obrázků lze nastavit v nabídce "Image Count" (defaultně 50 obrázků)
+- k formuláři pro nové vyhledávání se vrátíte pomocí odkazu "Home" v hlavním menu
