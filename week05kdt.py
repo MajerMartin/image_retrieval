@@ -82,3 +82,4 @@ for img in images:
     plt.colorbar()
     plt.show()
 
+print 'test'
