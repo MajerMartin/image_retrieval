@@ -45,7 +45,7 @@ if caffe_toggle:
     net.set_mode_cpu()
 
     # path to data folder
-    app.config['UPLOAD_FOLDER'] = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
+    app.config['UPLOAD_FOLDER'] = '/storage/plzen1/home/mmajer/caffe-flann-image-retrieval/data/image_search/'
 else:
     import h5py
     from random import randint

@@ -17,13 +17,13 @@ height = 227.
 width = 227.
 
 # root directory of images
-root = '/storage/plzen1/home/mmajer/pr4/data/sun_full/SUN397'
+root = '/storage/plzen1/home/mmajer/caffe-flann-image-retrieval/data/sun_full/SUN397'
 
 # data directory
 if debug:
     storage_dir = os.path.join(root, '..', '..', 'sun_full_sample')
 else:
-    storage_dir = '/storage/plzen1/home/mmajer/pr4/data/image_search/'
+    storage_dir = '/storage/plzen1/home/mmajer/caffe-flann-image-retrieval/data/image_search/'
 
 # paths for caffe
 caffe_root = '/storage/plzen1/home/campr/metacentrum/caffe/caffe_cemi_7_dev'
